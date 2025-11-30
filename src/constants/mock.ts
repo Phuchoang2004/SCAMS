@@ -1,4 +1,4 @@
-import { Room, RoomSession, RoomStatus } from "@/types";
+import { Device, Room, RoomSession, RoomStatus } from "@/types";
 
 export const mockRoom: Room = {
   id: "mock",
@@ -46,5 +46,38 @@ export const mockSessions: Array<RoomSession> = [
     createdBy: "Prof. Johnson",
     start: new Date("2025-12-28T18:00:00"),
     end: new Date("2025-12-28T19:30:00"),
+  },
+];
+
+export const mockDevices: Array<Device> = [
+  {
+    id: "device1",
+    name: "Front Light 1",
+    enabled: true,
+  },
+  {
+    id: "device2",
+    name: "Front Light 2",
+    enabled: true,
+  },
+  {
+    id: "device3",
+    name: "Front Light 3",
+    enabled: true,
+  },
+  {
+    id: "device4",
+    name: "Front Light 4",
+    enabled: true,
+  },
+  {
+    id: "device5",
+    name: "Front Light 5",
+    enabled: true,
+  },
+  {
+    id: "device6",
+    name: "Front Light 6",
+    enabled: true,
   },
 ];
