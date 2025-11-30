@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage } from "@/pages/auth/LoginPage";
+import { RegisterPage } from "@/pages/auth/RegisterPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
 import { SettingsPage } from "@/pages/settings/SettingsPage";
@@ -10,6 +11,7 @@ import { ROUTES } from "@/config/routes";
 import RoomDetails from "@/pages/room-details";
 import RoomBooking from "@/pages/room-booking";
 import RoomManage from "@/pages/room-manage";
+import BookingPage from "@/pages/booking";
 
 export const AppRouter: React.FC = () => {
   return (
@@ -17,6 +19,7 @@ export const AppRouter: React.FC = () => {
       <Routes>
         {/* Public routes */}
         <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+        <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
 
         {/* Protected routes with layout */}
         <Route
@@ -64,7 +67,7 @@ export const AppRouter: React.FC = () => {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <div>booking</div>
+                <BookingPage />
               </MainLayout>
             </ProtectedRoute>
           }

@@ -1,0 +1,200 @@
+/* Authentication Pages Styles */
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f5f5;
+}
+
+.auth-header-bar {
+  height: 8px;
+  background: linear-gradient(90deg, #00bcd4 0%, #00acc1 100%);
+  flex-shrink: 0;
+}
+
+.auth-content {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.auth-image-section {
+  flex: 0 0 50%;
+  max-width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: #ffffff;
+}
+
+.auth-image {
+  max-width: 100%;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.auth-form-section {
+  flex: 0 0 50%;
+  max-width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: #ffffff;
+}
+
+.auth-form-container {
+  width: 100%;
+  max-width: 380px;
+}
+
+.auth-title {
+  text-align: center;
+  margin-bottom: 8px !important;
+  color: #1890ff !important;
+  font-weight: 600 !important;
+}
+
+.auth-subtitle {
+  display: block;
+  text-align: center;
+  margin-bottom: 32px;
+  font-size: 14px;
+}
+
+.auth-form {
+  width: 100%;
+}
+
+.auth-input {
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  border: 1px solid #e0e0e0 !important;
+  background-color: #fafafa !important;
+}
+
+.auth-input:hover,
+.auth-input:focus {
+  border-color: #1890ff !important;
+  background-color: #ffffff !important;
+}
+
+.auth-input .ant-input {
+  background-color: transparent !important;
+}
+
+.auth-input .ant-input-password-icon {
+  color: #8c8c8c;
+}
+
+.input-icon {
+  color: #8c8c8c;
+  margin-right: 8px;
+}
+
+.auth-submit-btn {
+  height: 48px !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  background: linear-gradient(90deg, #1890ff 0%, #40a9ff 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.35) !important;
+  transition: all 0.3s ease !important;
+}
+
+.auth-submit-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(24, 144, 255, 0.45) !important;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.auth-footer a {
+  color: #1890ff;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.auth-footer a:hover {
+  color: #40a9ff;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+  .auth-content {
+    flex-direction: column;
+  }
+
+  .auth-image-section,
+  .auth-form-section {
+    flex: none;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .auth-image-section {
+    padding: 20px;
+    max-height: 40vh;
+  }
+
+  .auth-image {
+    max-height: 35vh;
+    border-radius: 12px;
+  }
+
+  .auth-form-section {
+    padding: 20px 40px 40px;
+  }
+}
+
+@media (max-width: 576px) {
+  .auth-image-section {
+    padding: 16px;
+  }
+
+  .auth-form-section {
+    padding: 16px 24px 32px;
+  }
+
+  .auth-form-container {
+    max-width: 100%;
+  }
+}
+
+/* Ant Design form item adjustments */
+.auth-form .ant-form-item {
+  margin-bottom: 20px;
+}
+
+.auth-form .ant-form-item-explain-error {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Password input icon alignment */
+.auth-form .ant-input-affix-wrapper {
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  border: 1px solid #e0e0e0 !important;
+  background-color: #fafafa !important;
+}
+
+.auth-form .ant-input-affix-wrapper:hover,
+.auth-form .ant-input-affix-wrapper-focused {
+  border-color: #1890ff !important;
+  background-color: #ffffff !important;
+}
+
+.auth-form .ant-input-affix-wrapper .ant-input {
+  background-color: transparent !important;
+}

@@ -1,6 +1,7 @@
 export const ROUTES = {
   // Auth routes
   LOGIN: "/login",
+  REGISTER: "/register",
 
   // Protected routes
   HOME: "/",
@@ -8,6 +9,9 @@ export const ROUTES = {
   ROOM_BOOKING: "/room/:id/booking",
   ROOM_MANAGE: "/room/:id/manage",
   BOOKING: "/booking",
+  MY_RESERVATIONS: "/my-reservations",
+  MANAGEMENT: "/management",
+  REPORT: "/report",
 
   // Fallback
   NOT_FOUND: "/404",
