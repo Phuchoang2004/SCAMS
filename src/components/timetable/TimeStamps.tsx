@@ -1,4 +1,3 @@
-import { Flex } from "antd";
 import { Typography, theme } from "antd";
 
 const { Text } = Typography;

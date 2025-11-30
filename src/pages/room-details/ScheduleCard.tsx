@@ -1,20 +1,31 @@
+import Loading from "@/components/loading";
 import Timetable from "@/components/timetable";
-import { Room, RoomStatus } from "@/types";
-import { Card, Flex, Row, Badge, Typography, Col } from "antd";
-import { Building, Map, MapPin } from "lucide-react";
+import { mockSessions } from "@/constants";
+import { RoomSession } from "@/types";
+import { Card, Flex, Typography } from "antd";
+import { useEffect, useState } from "react";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
-type ScheduleCardProps = {
-  room: Room;
-};
+const ScheduleCard = () => {
+  const [sessions, setSessions] = useState<Array<RoomSession>>([]);
 
-const ScheduleCard = ({ room }: ScheduleCardProps) => {
+  useEffect(() => {
+    setTimeout(() => {
+      setSessions(mockSessions);
+    }, 1000);
+  }, []);
+
   return (
     <Card>
       <Flex vertical gap={16}>
         <Title>Schedule</Title>
-        <Timetable start={"2025-12-22"} end={"2025-12-28"} />
+
+        <Timetable
+          sessions={sessions}
+          start={"2025-12-22"}
+          end={"2025-12-28"}
+        />
       </Flex>
     </Card>
   );

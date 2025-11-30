@@ -1,15 +1,17 @@
-import { Flex } from "antd";
 import TimeStamps from "./TimeStamps";
 import dayjs from "dayjs";
-import TimetableColumn from "./TimeTableColumn";
 import { getDaysArray } from "@/utils/getDaysArray";
+import SessionsOverlay from "./SessionsOverlay";
+import { RoomSession } from "@/types";
+import TimetableColumn from "./TimetableColumn";
 
 type TimetableProps = {
   start: dayjs.ConfigType;
   end: dayjs.ConfigType;
+  sessions: Array<RoomSession>;
 };
 
-const Timetable = ({ start, end }: TimetableProps) => {
+const Timetable = ({ start, end, sessions }: TimetableProps) => {
   const dates = getDaysArray(start, end);
 
   return (
@@ -37,6 +39,11 @@ const Timetable = ({ start, end }: TimetableProps) => {
           <TimetableColumn key={date.toISOString()} date={date} />
         ))}
       </div>
+      <SessionsOverlay
+        sessions={sessions}
+        start={dayjs(start)}
+        end={dayjs(end)}
+      />
     </div>
   );
 };

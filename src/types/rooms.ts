@@ -12,3 +12,11 @@ export type Room = {
   thumbnail?: string;
   status: RoomStatus;
 };
+
+export type RoomSession = {
+  id: string;
+  name: string;
+  createdBy: string;
+  start: Date;
+  end: Date;
+};

@@ -1,4 +1,4 @@
-import { Flex, theme } from "antd";
+import { theme } from "antd";
 import dayjs from "dayjs";
 
 type TimetableColumnProps = {

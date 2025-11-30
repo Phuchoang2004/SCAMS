@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DetailsCard from "./DetailsCard";
 import ScheduleCard from "./ScheduleCard";
+import Loading from "@/components/loading";
 
 const RoomDetails = () => {
   const { id } = useParams();
@@ -24,7 +25,7 @@ const RoomDetails = () => {
   if (loading)
     return (
       <RoomDetailsLayout currentTab="details">
-        <Spin spinning={loading} tip="Loading Room data" />
+        <Loading customText="Loading room data..." />
       </RoomDetailsLayout>
     );
   if (!room) return <></>;
@@ -32,7 +33,7 @@ const RoomDetails = () => {
   return (
     <RoomDetailsLayout currentTab="details">
       <DetailsCard room={room} />
-      <ScheduleCard room={room} />
+      <ScheduleCard />
     </RoomDetailsLayout>
   );
 };
