@@ -1,13 +1,15 @@
-import React from 'react';
-import { Layout, Menu, theme } from 'antd';
-import type { MenuProps } from 'antd';
+import React from "react";
+import { Layout, Menu, theme } from "antd";
+import type { MenuProps } from "antd";
 import {
   DashboardOutlined,
   UserOutlined,
   SettingOutlined,
-} from '@ant-design/icons';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { ROUTES } from '@/config/routes';
+  HomeOutlined,
+  CalendarOutlined,
+} from "@ant-design/icons";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ROUTES } from "@/config/routes";
 
 const { Sider } = Layout;
 
@@ -20,24 +22,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
   const location = useLocation();
   const { token } = theme.useToken();
 
-  const menuItems: MenuProps['items'] = [
+  const menuItems: MenuProps["items"] = [
     {
-      key: ROUTES.DASHBOARD,
-      icon: <DashboardOutlined />,
-      label: 'Dashboard',
-      onClick: () => navigate(ROUTES.DASHBOARD),
+      key: ROUTES.HOME,
+      icon: <HomeOutlined />,
+      label: "Home",
+      onClick: () => navigate(ROUTES.HOME),
     },
     {
-      key: ROUTES.PROFILE,
-      icon: <UserOutlined />,
-      label: 'Profile',
-      onClick: () => navigate(ROUTES.PROFILE),
-    },
-    {
-      key: ROUTES.SETTINGS,
-      icon: <SettingOutlined />,
-      label: 'Settings',
-      onClick: () => navigate(ROUTES.SETTINGS),
+      key: ROUTES.BOOKING,
+      icon: <CalendarOutlined />,
+      label: "Booking",
+      onClick: () => navigate(ROUTES.BOOKING),
     },
   ];
 
@@ -54,25 +50,25 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
       <div
         style={{
           height: 64,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           fontSize: collapsed ? 16 : 20,
-          fontWeight: 'bold',
+          fontWeight: "bold",
           borderBottom: `1px solid ${token.colorBorderSecondary}`,
           color: token.colorPrimary,
         }}
       >
-        {collapsed ? 'T' : 'Template'}
+        {collapsed ? "S" : "SCAMS"}
       </div>
-      
+
       <Menu
         mode="inline"
         selectedKeys={[location.pathname]}
         items={menuItems}
         style={{
           borderRight: 0,
-          background: 'transparent',
+          background: "transparent",
         }}
       />
     </Sider>

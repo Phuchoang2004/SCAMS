@@ -1,15 +1,17 @@
 export const ROUTES = {
   // Auth routes
-  LOGIN: '/login',
-  
+  LOGIN: "/login",
+
   // Protected routes
-  DASHBOARD: '/',
-  PROFILE: '/profile',
-  SETTINGS: '/settings',
-  
+  HOME: "/",
+  ROOM_DETAILS: "/room/:id/details",
+  ROOM_BOOKING: "/room/:id/booking",
+  ROOM_MANAGE: "/room/:id/manage",
+  BOOKING: "/booking",
+
   // Fallback
-  NOT_FOUND: '/404',
+  NOT_FOUND: "/404",
 } as const;
 
 export type RouteKey = keyof typeof ROUTES;
-export type RoutePath = typeof ROUTES[RouteKey];
+export type RoutePath = (typeof ROUTES)[RouteKey];
