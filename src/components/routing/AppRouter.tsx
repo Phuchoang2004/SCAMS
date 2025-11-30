@@ -1,12 +1,15 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { LoginPage } from '@/pages/auth/LoginPage';
-import { DashboardPage } from '@/pages/dashboard/DashboardPage';
-import { ProfilePage } from '@/pages/profile/ProfilePage';
-import { SettingsPage } from '@/pages/settings/SettingsPage';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
-import { MainLayout } from '@/components/layout/MainLayout';
-import { ROUTES } from '@/config/routes';
+import React from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { LoginPage } from "@/pages/auth/LoginPage";
+import { DashboardPage } from "@/pages/dashboard/DashboardPage";
+import { ProfilePage } from "@/pages/profile/ProfilePage";
+import { SettingsPage } from "@/pages/settings/SettingsPage";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { MainLayout } from "@/components/layout/MainLayout";
+import { ROUTES } from "@/config/routes";
+import RoomDetails from "@/pages/room-details";
+import RoomBooking from "@/pages/room-booking";
+import RoomManage from "@/pages/room-manage";
 
 export const AppRouter: React.FC = () => {
   return (
@@ -17,38 +20,57 @@ export const AppRouter: React.FC = () => {
 
         {/* Protected routes with layout */}
         <Route
-          path={ROUTES.DASHBOARD}
+          path={ROUTES.HOME}
           element={
             <ProtectedRoute>
               <MainLayout>
-                <DashboardPage />
+                <div>home page</div>
               </MainLayout>
             </ProtectedRoute>
           }
         />
         <Route
-          path={ROUTES.PROFILE}
+          path={ROUTES.ROOM_DETAILS}
           element={
             <ProtectedRoute>
               <MainLayout>
-                <ProfilePage />
+                <RoomDetails />
               </MainLayout>
             </ProtectedRoute>
           }
         />
         <Route
-          path={ROUTES.SETTINGS}
+          path={ROUTES.ROOM_BOOKING}
           element={
             <ProtectedRoute>
               <MainLayout>
-                <SettingsPage />
+                <RoomBooking />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.ROOM_MANAGE}
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <RoomManage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path={ROUTES.BOOKING}
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <div>booking</div>
               </MainLayout>
             </ProtectedRoute>
           }
         />
 
-        {/* Catch all route - redirect to dashboard */}
-        <Route path="*" element={<Navigate to={ROUTES.DASHBOARD} replace />} />
+        <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
       </Routes>
     </BrowserRouter>
   );
