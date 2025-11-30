@@ -7,6 +7,9 @@ import { SettingsPage } from "@/pages/settings/SettingsPage";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { ROUTES } from "@/config/routes";
+import RoomDetails from "@/pages/room-details";
+import RoomBooking from "@/pages/room-booking";
+import RoomManage from "@/pages/room-manage";
 
 export const AppRouter: React.FC = () => {
   return (
@@ -31,7 +34,7 @@ export const AppRouter: React.FC = () => {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <div>ROOM_DETAILS</div>
+                <RoomDetails />
               </MainLayout>
             </ProtectedRoute>
           }
@@ -41,7 +44,7 @@ export const AppRouter: React.FC = () => {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <div>ROOM BOOKING</div>
+                <RoomBooking />
               </MainLayout>
             </ProtectedRoute>
           }
@@ -51,7 +54,7 @@ export const AppRouter: React.FC = () => {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <div>manage and control</div>
+                <RoomManage />
               </MainLayout>
             </ProtectedRoute>
           }
