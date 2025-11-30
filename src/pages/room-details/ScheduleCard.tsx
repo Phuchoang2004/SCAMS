@@ -1,13 +1,18 @@
 import Loading from "@/components/loading";
 import Timetable from "@/components/timetable";
+import WeekPicker from "@/components/week-picker";
 import { mockSessions } from "@/constants";
 import { RoomSession } from "@/types";
-import { Card, Flex, Typography } from "antd";
+import { Button, Card, Flex, Typography } from "antd";
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const { Title } = Typography;
 
 const ScheduleCard = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [sessions, setSessions] = useState<Array<RoomSession>>([]);
 
   useEffect(() => {
@@ -20,7 +25,16 @@ const ScheduleCard = () => {
     <Card>
       <Flex vertical gap={16}>
         <Title>Schedule</Title>
-
+        <Flex gap={24}>
+          <WeekPicker />
+          <Button
+            color="primary"
+            variant="filled"
+            onClick={() => navigate(`/room/${id}/booking`)}
+          >
+            Book a room
+          </Button>
+        </Flex>
         <Timetable
           sessions={sessions}
           start={"2025-12-22"}
