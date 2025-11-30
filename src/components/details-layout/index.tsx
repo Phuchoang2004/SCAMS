@@ -1,4 +1,4 @@
-import { Tabs, TabsProps } from "antd";
+import { Flex, Tabs, TabsProps } from "antd";
 import { ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -37,10 +37,10 @@ const RoomDetailsLayout = ({
   };
 
   return (
-    <div>
+    <Flex vertical gap={24}>
       <Tabs defaultActiveKey={currentTab} items={items} onChange={tabChange} />
       {children}
-    </div>
+    </Flex>
   );
 };
 
