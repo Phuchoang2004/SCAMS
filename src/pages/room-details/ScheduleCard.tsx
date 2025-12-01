@@ -24,7 +24,7 @@ const ScheduleCard = () => {
   return (
     <Card>
       <Flex vertical gap={16}>
-        <Title>Schedule</Title>
+        <Title level={2}>Schedule</Title>
         <Flex gap={24}>
           <WeekPicker />
           <Button

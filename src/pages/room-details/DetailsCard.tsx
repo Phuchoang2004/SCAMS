@@ -13,7 +13,7 @@ const DetailsCard = ({ room }: DetailsCardProps) => {
     <Card>
       <Flex justify="space-between">
         <Flex vertical align="flex-start" gap={16}>
-          <Title>Details</Title>
+          <Title level={2}>Details</Title>
 
           <Row gutter={16}>
             <Col>
