@@ -1,4 +1,10 @@
-import { Device, Room, RoomSession, RoomStatus } from "@/types";
+import {
+  Device,
+  Room,
+  RoomSession,
+  RoomStatus,
+  UsageReportData,
+} from "@/types";
 
 export const mockRoom: Room = {
   id: "mock",
@@ -80,4 +86,15 @@ export const mockDevices: Array<Device> = [
     name: "Front Light 6",
     enabled: true,
   },
+];
+
+export const mockReportData: Array<UsageReportData> = [
+  { timestamp: "27/10 - 02/11", hours: 145, watts: 3200 },
+  { timestamp: "03/11 - 09/11", hours: 162, watts: 3850 },
+  { timestamp: "10/11 - 16/11", hours: 155, watts: 3400 },
+  { timestamp: "17/11 - 23/11", hours: 180, watts: 4100 },
+  { timestamp: "24/11 - 30/11", hours: 170, watts: 3950 },
+  { timestamp: "01/12 - 07/12", hours: 195, watts: 4300 },
+  { timestamp: "08/12 - 14/12", hours: 210, watts: 4600 },
+  { timestamp: "15/12 - 21/12", hours: 200, watts: 4000 },
 ];
