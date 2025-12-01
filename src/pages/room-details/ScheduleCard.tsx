@@ -42,6 +42,7 @@ const ScheduleCard = () => {
         </Flex>
         <Timetable
           sessions={sessions}
+          newScheduledSessions={[]}
           start={dateRange.start}
           end={dateRange.end}
         />

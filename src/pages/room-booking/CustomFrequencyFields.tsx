@@ -38,37 +38,6 @@ const CustomFrequencyFields = ({
       </>
     );
 
-  if (frequency === Frequency.MONTHLY)
-    return (
-      <>
-        <Form.Item name={"day"} label="Day">
-          <Select
-            defaultValue={"1"}
-            onChange={(value) => {
-              form.setFieldValue("day", value);
-            }}
-            options={Array.from({ length: 30 }, (_, i) => i + 1).map(
-              (value) => ({
-                label: `${String(value)}${
-                  value === 1
-                    ? "st"
-                    : value === 2
-                    ? "nd"
-                    : value === 3
-                    ? "rd"
-                    : "th"
-                }`,
-                value: String(value),
-              })
-            )}
-          />
-        </Form.Item>
-        <Form.Item name={"appliedFor"} label="Applied for">
-          <DatePicker.RangePicker required allowClear={false} />
-        </Form.Item>
-      </>
-    );
-
   return (
     <Form.Item name={"date"} label="Date">
       <DatePicker required />

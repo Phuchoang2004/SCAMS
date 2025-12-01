@@ -13,10 +13,6 @@ export const bookingOptions: Array<{ label: string; value: Frequency }> = [
     value: Frequency.WEEKLY,
     label: "Weekly",
   },
-  {
-    value: Frequency.MONTHLY,
-    label: "Monthly",
-  },
 ];
 
 export const weekdayOptions: Array<{ label: string; value: Weekday }> = [

@@ -5,11 +5,17 @@ import { theme } from "antd";
 
 type SessionsOverlayProps = {
   sessions: Array<RoomSession>;
+  newSessions: Array<RoomSession>;
   start: dayjs.Dayjs;
   end: dayjs.Dayjs;
 };
 
-const SessionsOverlay = ({ sessions, start, end }: SessionsOverlayProps) => {
+const ScheduledSessionsOverlay = ({
+  sessions,
+  newSessions,
+  start,
+  end,
+}: SessionsOverlayProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -23,8 +29,9 @@ const SessionsOverlay = ({ sessions, start, end }: SessionsOverlayProps) => {
         height: "100%",
       }}
     >
-      {sessions.map((session) => (
+      {newSessions.map((session) => (
         <SessionItem
+          sessions={sessions}
           key={session.id}
           session={session}
           containerRef={containerRef}
@@ -37,6 +44,7 @@ const SessionsOverlay = ({ sessions, start, end }: SessionsOverlayProps) => {
 };
 
 type SessionItemProps = {
+  sessions: Array<RoomSession>;
   session: RoomSession;
   containerRef: RefObject<HTMLDivElement | null>;
   start: dayjs.Dayjs;
@@ -44,6 +52,7 @@ type SessionItemProps = {
 };
 
 const SessionItem = ({
+  sessions,
   session,
   containerRef,
   start,
@@ -63,6 +72,12 @@ const SessionItem = ({
   const offsetHoursFromSeven = dayjs(session.start).diff(
     sevenAmSameDay,
     "hour"
+  );
+
+  const isOverlapped = sessions.some(
+    (oldSession) =>
+      dayjs(session.start).isBefore(dayjs(oldSession.end)) &&
+      dayjs(session.end).isAfter(dayjs(oldSession.start))
   );
 
   const width = (containerWidth - 64) / days;
@@ -86,8 +101,10 @@ const SessionItem = ({
         flexDirection: "column",
         gap: 4,
         padding: 4,
-        backgroundColor: token.colorPrimary,
-        color: "white",
+        backgroundColor: isOverlapped
+          ? token.colorErrorBgHover
+          : token.colorPrimaryBgHover,
+        color: isOverlapped ? token.colorErrorBorder : token.colorPrimaryBorder,
       }}
     >
       <div style={{ textAlign: "center", fontWeight: "bold" }}>
@@ -98,4 +115,4 @@ const SessionItem = ({
   );
 };
 
-export default SessionsOverlay;
+export default ScheduledSessionsOverlay;

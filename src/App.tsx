@@ -6,9 +6,11 @@ import { AppRouter } from "@/components/routing/AppRouter";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { customTheme, darkTheme } from "@/config/theme";
 import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 import updateLocale from "dayjs/plugin/updateLocale";
 
 dayjs.extend(updateLocale);
+dayjs.extend(isBetween);
 
 dayjs.updateLocale("en", {
   weekStart: 1,
