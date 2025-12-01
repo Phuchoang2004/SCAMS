@@ -4,14 +4,21 @@ import { getDaysArray } from "@/utils/getDaysArray";
 import SessionsOverlay from "./SessionsOverlay";
 import { RoomSession } from "@/types";
 import TimetableColumn from "./TimetableColumn";
+import ScheduledSessionsOverlay from "./ScheduledSessionsOverlay";
 
 type TimetableProps = {
   start: dayjs.ConfigType;
   end: dayjs.ConfigType;
   sessions: Array<RoomSession>;
+  newScheduledSessions: Array<RoomSession>;
 };
 
-const Timetable = ({ start, end, sessions }: TimetableProps) => {
+const Timetable = ({
+  start,
+  end,
+  sessions,
+  newScheduledSessions,
+}: TimetableProps) => {
   const dates = getDaysArray(start, end);
 
   return (
@@ -41,6 +48,12 @@ const Timetable = ({ start, end, sessions }: TimetableProps) => {
       </div>
       <SessionsOverlay
         sessions={sessions}
+        start={dayjs(start)}
+        end={dayjs(end)}
+      />
+      <ScheduledSessionsOverlay
+        sessions={sessions}
+        newSessions={newScheduledSessions}
         start={dayjs(start)}
         end={dayjs(end)}
       />

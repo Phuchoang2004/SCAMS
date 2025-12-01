@@ -2,11 +2,16 @@ import { DatePicker } from "antd";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import advancedFormat from "dayjs/plugin/advancedFormat";
+import { DateRange } from "@/types";
 
 dayjs.extend(isoWeek);
 dayjs.extend(advancedFormat);
 
-const WeekPicker = () => {
+type WeekPickerProps = {
+  onChange?: (dateRange: DateRange) => void;
+};
+
+const WeekPicker = ({ onChange }: WeekPickerProps) => {
   const SEMESTER_START = dayjs("2025-09-15");
 
   const formatWeek = (value: dayjs.Dayjs) => {
@@ -23,12 +28,18 @@ const WeekPicker = () => {
     <DatePicker
       picker="week"
       format={formatWeek}
+      allowClear={false}
       style={{
         width: "100%",
         height: "40px",
         borderRadius: "6px",
       }}
-      defaultValue={dayjs("2025-11-03")}
+      onChange={(date) => {
+        const start = date.startOf("week");
+        const end = date.endOf("week");
+        if (onChange) onChange({ start, end });
+      }}
+      defaultValue={dayjs()}
     />
   );
 };

@@ -2,10 +2,11 @@ import Loading from "@/components/loading";
 import Timetable from "@/components/timetable";
 import WeekPicker from "@/components/week-picker";
 import { mockSessions } from "@/constants";
-import { RoomSession } from "@/types";
+import { DateRange, RoomSession } from "@/types";
 import { Button, Card, Flex, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import dayjs from "dayjs";
 
 const { Title } = Typography;
 
@@ -13,6 +14,10 @@ const ScheduleCard = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const [dateRange, setDateRange] = useState<DateRange>({
+    start: dayjs().startOf("week"),
+    end: dayjs().endOf("week"),
+  });
   const [sessions, setSessions] = useState<Array<RoomSession>>([]);
 
   useEffect(() => {
@@ -26,7 +31,7 @@ const ScheduleCard = () => {
       <Flex vertical gap={16}>
         <Title level={2}>Schedule</Title>
         <Flex gap={24}>
-          <WeekPicker />
+          <WeekPicker onChange={setDateRange} />
           <Button
             color="primary"
             variant="filled"
@@ -37,8 +42,9 @@ const ScheduleCard = () => {
         </Flex>
         <Timetable
           sessions={sessions}
-          start={"2025-12-22"}
-          end={"2025-12-28"}
+          newScheduledSessions={[]}
+          start={dateRange.start}
+          end={dateRange.end}
         />
       </Flex>
     </Card>
