@@ -29,12 +29,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
       label: "Home",
       onClick: () => navigate(ROUTES.HOME),
     },
-    {
-      key: ROUTES.BOOKING,
-      icon: <CalendarOutlined />,
-      label: "Booking",
-      onClick: () => navigate(ROUTES.BOOKING),
-    },
   ];
 
   return (

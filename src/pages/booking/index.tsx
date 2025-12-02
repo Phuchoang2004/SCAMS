@@ -20,6 +20,7 @@ import {
   ClockCircleOutlined,
   CalendarOutlined,
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import './booking.css';
 
 const { Title, Text } = Typography;
@@ -104,6 +105,11 @@ const BookingPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+
+  const handleView = (roomId: string) => {
+    navigate(`/room/${roomId}/details`);
+  };
 
   const handleBook = (room: Room) => {
     setSelectedRoom(room);
@@ -219,7 +225,7 @@ const BookingPage: React.FC = () => {
                           <Text type="secondary">{room.block}, {room.floor}</Text>
                         </div>
                         <Space className="room-actions">
-                          <Button>View</Button>
+                          <Button onClick={() => handleView(room.id)}>View</Button>
                           <Button type="primary" onClick={() => handleBook(room)}>
                             Book
                           </Button>
@@ -275,7 +281,7 @@ const BookingPage: React.FC = () => {
                         <Text type="secondary">{reservation.time} | {reservation.date}</Text>
                       </div>
                       <Space className="reservation-actions">
-                        <Button size="small">View</Button>
+                        <Button size="small" onClick={() => handleView(reservation.id)}>View</Button>
                         {reservation.canCheckIn ? (
                           <Button size="small" type="primary">Check in</Button>
                         ) : reservation.countdown ? (

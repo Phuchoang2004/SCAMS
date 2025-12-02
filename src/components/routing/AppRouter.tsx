@@ -27,7 +27,7 @@ export const AppRouter: React.FC = () => {
           element={
             <ProtectedRoute>
               <MainLayout>
-                <div>home page</div>
+                <BookingPage />
               </MainLayout>
             </ProtectedRoute>
           }
