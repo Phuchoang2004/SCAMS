@@ -20,13 +20,17 @@ const TimeStamps = () => {
       }}
     >
       {hours.map((hour, index) => (
-        <Text
+        <div
           key={hour}
-          color={index % 2 === 0 ? token.colorPrimary : token.colorTextTertiary}
-          strong
+          style={{
+            color:
+              index % 2 === 0 ? token.colorPrimary : token.colorTextTertiary,
+            minWidth: 40,
+            width: 40,
+          }}
         >
           {String(hour).padStart(2, "0")}:00
-        </Text>
+        </div>
       ))}
     </div>
   );
