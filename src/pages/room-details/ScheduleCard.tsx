@@ -5,7 +5,6 @@ import { Button, Card, Flex, Typography, Divider } from "antd";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
-import { CalendarDays } from "lucide-react";
 
 const { Title, Text } = Typography;
 

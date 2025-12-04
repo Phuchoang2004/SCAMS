@@ -76,7 +76,7 @@ const Timetable = ({
           </tr>
         </thead>
         <tbody>
-          {hours.map((hour, rowIndex) => (
+          {hours.map((hour) => (
             <tr key={hour}>
               <td
                 style={{

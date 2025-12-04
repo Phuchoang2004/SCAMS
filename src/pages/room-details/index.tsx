@@ -13,21 +13,18 @@ const RoomDetails = () => {
   const [room, setRoom] = useState<Room | null>(null);
   const [sessions, setSessions] = useState<RoomSession[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
 
     const fetchRoomDetails = async () => {
       setLoading(true);
-      setError(null);
       try {
         const data = await roomsService.getDetails(id);
         setRoom(data.room);
         setSessions(data.sessions);
       } catch (err) {
         console.error("Failed to fetch room details:", err);
-        setError("Failed to load room data");
       } finally {
         setLoading(false);
       }
