@@ -1,16 +1,19 @@
-import Loading from "@/components/loading";
 import Timetable from "@/components/timetable";
 import WeekPicker from "@/components/week-picker";
-import { mockSessions } from "@/constants";
 import { DateRange, RoomSession } from "@/types";
-import { Button, Card, Flex, Typography } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Card, Flex, Typography, Divider } from "antd";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
+import { CalendarDays } from "lucide-react";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
-const ScheduleCard = () => {
+type ScheduleCardProps = {
+  sessions: RoomSession[];
+};
+
+const ScheduleCard = ({ sessions }: ScheduleCardProps) => {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -18,28 +21,33 @@ const ScheduleCard = () => {
     start: dayjs().startOf("week"),
     end: dayjs().endOf("week"),
   });
-  const [sessions, setSessions] = useState<Array<RoomSession>>([]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setSessions(mockSessions);
-    }, 1000);
-  }, []);
 
   return (
     <Card>
       <Flex vertical gap={16}>
-        <Title level={2}>Schedule</Title>
-        <Flex gap={24}>
+        <Flex align="center" gap={12}>
+          <div>
+            <Title level={2} style={{ marginBottom: 0 }}>
+              Schedule
+            </Title>
+            <Text type="secondary">View and manage room bookings</Text>
+          </div>
+        </Flex>
+
+        <Divider style={{ margin: "8px 0 16px 0" }} />
+
+        <Flex justify="space-between" align="center" gap={24}>
           <WeekPicker onChange={setDateRange} />
           <Button
-            color="primary"
-            variant="filled"
+            type="primary"
+            size="large"
+            style={{ height: 42, paddingInline: 24, backgroundColor: "#0077B5", fontWeight: 600 }}
             onClick={() => navigate(`/room/${id}/booking`)}
           >
-            Book a room
+            Book A Room
           </Button>
         </Flex>
+
         <Timetable
           sessions={sessions}
           newScheduledSessions={[]}
