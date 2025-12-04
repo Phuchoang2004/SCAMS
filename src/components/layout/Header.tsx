@@ -123,11 +123,7 @@ export const Header: React.FC<HeaderProps> = ({ collapsed, onToggle }) => {
             <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.3 }}>
               <Text strong style={{ fontSize: 14 }}>{user?.name}</Text>
               <Text type="secondary" style={{ fontSize: 12 }}>
-                {user?.role === 'admin' ? 'Admin' :
-                 user?.role === 'lecturer' || user?.role === 'Lecturer' ? 'Lecturer' :
-                 user?.role === 'student' || user?.role === 'Student' ? 'Student' :
-                 user?.role === 'security' || user?.role === 'Security' ? 'Security' :
-                 user?.role || 'User'}
+                {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'User'}
               </Text>
             </div>
             <ChevronDown size={16} color="#8c8c8c" />
