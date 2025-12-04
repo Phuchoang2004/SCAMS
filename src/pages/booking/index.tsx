@@ -111,6 +111,10 @@ const BookingPage: React.FC = () => {
     navigate(`/room/${roomId}/details`);
   };
 
+  const handleEdit = (roomId: string) => {
+    navigate(`/room/${roomId}/edit`);
+  };
+
   const handleBook = (room: Room) => {
     setSelectedRoom(room);
     setIsModalOpen(true);
@@ -138,13 +142,13 @@ const BookingPage: React.FC = () => {
         <Col xs={24} lg={16}>
           <Card className="booking-card">
             <div className="booking-header">
-              <Title level={4} style={{ margin: 0 }}>Room booking</Title>
-              <Text type="secondary">Choose a specific time range and book for available rooms</Text>
+              <Title level={4} style={{ margin: 0 }}>Room Booking</Title>
+              <Text type="secondary">Choose a specific time range and Book any available rooms</Text>
             </div>
 
             <div className="booking-filters">
               <Row gutter={[16, 16]} align="middle">
-                <Col xs={24} md={12} lg={10}>
+                <Col xs={24} md={12} lg={12}>
                   <Input
                     placeholder="Enter a building, floor or room name to search..."
                     prefix={<SearchOutlined />}
@@ -152,50 +156,55 @@ const BookingPage: React.FC = () => {
                   />
                 </Col>
                 <Col xs={12} md={6} lg={4}>
-                  <Select defaultValue="all" style={{ width: '100%' }}>
-                    <Option value="all">All blocks</Option>
+                  <Select placeholder="None" allowClear style={{ width: '100%' }}>
+                    <Option value="campus1">Campus 1</Option>
+                    <Option value="campus2">Campus 2</Option>
+                  </Select>
+                </Col>
+                <Col xs={12} md={6} lg={4}>
+                  <Select placeholder="None" allowClear style={{ width: '100%' }}>
                     <Option value="b4">Block B4</Option>
                     <Option value="b6">Block B6</Option>
                     <Option value="c4">Block C4</Option>
                   </Select>
                 </Col>
-                <Col xs={12} md={6} lg={2}>
-                  <Button type="primary" icon={<SearchOutlined />}>
+                <Col xs={12} md={6} lg={4}>
+                  <Button type="primary" icon={<SearchOutlined />} block>
                     Search
                   </Button>
                 </Col>
               </Row>
 
               <Row gutter={[16, 16]} align="middle" style={{ marginTop: 16 }}>
-                <Col>
-                  <Text>From:</Text>
+                <Col xs={12} md={6} lg={6}>
+                  <Space>
+                    <Text>From:</Text>
+                    <Select defaultValue="07:00" style={{ width: 100 }}>
+                      {Array.from({ length: 15 }, (_, i) => {
+                        const hour = 7 + i;
+                        const time = `${hour.toString().padStart(2, '0')}:00`;
+                        return <Option key={time} value={time}>{time}</Option>;
+                      })}
+                    </Select>
+                  </Space>
                 </Col>
-                <Col>
-                  <Select defaultValue="07:00" style={{ width: 100 }}>
-                    {Array.from({ length: 15 }, (_, i) => {
-                      const hour = 7 + i;
-                      const time = `${hour.toString().padStart(2, '0')}:00`;
-                      return <Option key={time} value={time}>{time}</Option>;
-                    })}
-                  </Select>
+                <Col xs={12} md={6} lg={6}>
+                  <Space>
+                    <Text>To:</Text>
+                    <Select defaultValue="09:00" style={{ width: 100 }}>
+                      {Array.from({ length: 15 }, (_, i) => {
+                        const hour = 7 + i;
+                        const time = `${hour.toString().padStart(2, '0')}:00`;
+                        return <Option key={time} value={time}>{time}</Option>;
+                      })}
+                    </Select>
+                  </Space>
                 </Col>
-                <Col>
-                  <Text>to:</Text>
+                <Col xs={12} md={6} lg={6}>
+                  <DatePicker style={{ width: '100%' }} placeholder="Select date" />
                 </Col>
-                <Col>
-                  <Select defaultValue="09:00" style={{ width: 100 }}>
-                    {Array.from({ length: 15 }, (_, i) => {
-                      const hour = 7 + i;
-                      const time = `${hour.toString().padStart(2, '0')}:00`;
-                      return <Option key={time} value={time}>{time}</Option>;
-                    })}
-                  </Select>
-                </Col>
-                <Col>
-                  <DatePicker style={{ width: 150 }} />
-                </Col>
-                <Col>
-                  <Select defaultValue="every-week" style={{ width: 130 }}>
+                <Col xs={12} md={6} lg={6}>
+                  <Select defaultValue="every-week" style={{ width: '100%' }}>
                     <Option value="once">Once</Option>
                     <Option value="every-week">Every week</Option>
                     <Option value="every-month">Every month</Option>
@@ -215,7 +224,7 @@ const BookingPage: React.FC = () => {
                         alt={room.name}
                         className="room-image"
                         onError={(e) => {
-                          e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&q=80';
+                          e.currentTarget.src = 'public/images/classroom.jpg';
                         }}
                       />
                       <div className="room-info">
@@ -226,6 +235,7 @@ const BookingPage: React.FC = () => {
                         </div>
                         <Space className="room-actions">
                           <Button onClick={() => handleView(room.id)}>View</Button>
+                          <Button onClick={() => handleEdit(room.id)}>Edit</Button>
                           <Button type="primary" onClick={() => handleBook(room)}>
                             Book
                           </Button>
@@ -254,7 +264,7 @@ const BookingPage: React.FC = () => {
         <Col xs={24} lg={8}>
           <Card className="reservations-card">
             <div className="reservations-header">
-              <Title level={5} style={{ margin: 0 }}>Upcoming reservations</Title>
+              <Title level={5} style={{ margin: 0 }}>Upcoming Reservations</Title>
               <Button type="link" className="view-more-btn">View more</Button>
             </div>
 
@@ -267,7 +277,7 @@ const BookingPage: React.FC = () => {
                       alt={reservation.roomName}
                       className="reservation-image"
                       onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=200&q=80';
+                        e.currentTarget.src = 'public/images/classroom.jpg';
                       }}
                     />
                     <div className="reservation-info">
@@ -333,7 +343,7 @@ const BookingPage: React.FC = () => {
               alt={selectedRoom.name}
               className="modal-room-image"
               onError={(e) => {
-                e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&q=80';
+                e.currentTarget.src = 'public/images/classroom.jpg';
               }}
             />
 
