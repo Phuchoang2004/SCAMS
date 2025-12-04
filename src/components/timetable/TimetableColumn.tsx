@@ -5,6 +5,8 @@ type TimetableColumnProps = {
   date: dayjs.Dayjs;
 };
 
+const NAVY_BLUE = "#1A3D64";
+
 const TimetableColumn = ({ date }: TimetableColumnProps) => {
   const { token } = theme.useToken();
   const hours = Array.from({ length: 15 }, (_, i) => i + 7);
@@ -22,14 +24,15 @@ const TimetableColumn = ({ date }: TimetableColumnProps) => {
       <div
         style={{
           width: "100%",
-          fontWeight: "bold",
-          height: 40,
+          fontWeight: 600,
+          fontSize: 20,
+          height: 44,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           border: "1px solid",
-          borderColor: token.colorTextTertiary,
-          backgroundColor: token.colorTextTertiary,
+          borderColor: NAVY_BLUE,
+          backgroundColor: NAVY_BLUE,
           color: "white",
         }}
       >
@@ -42,7 +45,8 @@ const TimetableColumn = ({ date }: TimetableColumnProps) => {
             width: "100%",
             height: 40,
             border: "1px solid",
-            color: token.colorTextTertiary,
+            borderColor: token.colorBorderSecondary,
+            backgroundColor: "#fafafa",
           }}
         ></div>
       ))}

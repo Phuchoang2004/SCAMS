@@ -1,13 +1,7 @@
 import React from "react";
 import { Layout, Menu, theme } from "antd";
 import type { MenuProps } from "antd";
-import {
-  DashboardOutlined,
-  UserOutlined,
-  SettingOutlined,
-  HomeOutlined,
-  CalendarOutlined,
-} from "@ant-design/icons";
+import { HomeOutlined } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ROUTES } from "@/config/routes";
 
@@ -25,8 +19,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
   const menuItems: MenuProps["items"] = [
     {
       key: ROUTES.HOME,
-      icon: <HomeOutlined />,
-      label: "Home",
+      icon: <HomeOutlined style={{ fontSize: 18 }} />,
+      label: <span style={{ fontSize: 15, fontWeight: 600 }}>Home</span>,
       onClick: () => navigate(ROUTES.HOME),
     },
   ];
@@ -47,10 +41,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: collapsed ? 16 : 20,
-          fontWeight: "bold",
+          fontSize: collapsed ? 20 : 24,
+          fontWeight: 700,
           borderBottom: `1px solid ${token.colorBorderSecondary}`,
           color: token.colorPrimary,
+          letterSpacing: 2,
         }}
       >
         {collapsed ? "S" : "SCAMS"}
@@ -63,6 +58,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed }) => {
         style={{
           borderRight: 0,
           background: "transparent",
+          marginTop: 12,
+          padding: "0 8px",
         }}
       />
     </Sider>

@@ -1,6 +1,7 @@
-import { Typography, theme } from "antd";
+import { theme } from "antd";
 
-const { Text } = Typography;
+const HEADER_HEIGHT = 44;
+const ROW_HEIGHT = 40;
 
 const TimeStamps = () => {
   const { token } = theme.useToken();
@@ -10,23 +11,25 @@ const TimeStamps = () => {
   return (
     <div
       style={{
-        marginTop: 24,
-        display: "flex",
-        flexDirection: "column",
-        gap: 18,
-        width: 40,
-        minWidth: 40,
-        height: "fit-content",
+        position: "relative",
+        width: 50,
+        minWidth: 50,
+        height: HEADER_HEIGHT + 15 * ROW_HEIGHT,
       }}
     >
       {hours.map((hour, index) => (
         <div
           key={hour}
           style={{
+            position: "absolute",
+            top: HEADER_HEIGHT + index * ROW_HEIGHT,
+            right: 8,
+            transform: "translateY(-50%)",
             color:
-              index % 2 === 0 ? token.colorPrimary : token.colorTextTertiary,
-            minWidth: 40,
-            width: 40,
+              index % 2 === 0 ? token.colorPrimary : token.colorTextSecondary,
+            fontSize: 13,
+            fontWeight: index % 2 === 0 ? 600 : 400,
+            lineHeight: 1,
           }}
         >
           {String(hour).padStart(2, "0")}:00
