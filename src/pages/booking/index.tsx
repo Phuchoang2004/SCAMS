@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Card,
   Input,
@@ -13,6 +13,9 @@ import {
   Form,
   Tag,
   Space,
+  Spin,
+  Empty,
+  Alert,
 } from 'antd';
 import {
   SearchOutlined,
@@ -21,22 +24,20 @@ import {
   CalendarOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { bookingsService, Booking } from '@/services/bookings';
+import { roomsService } from '@/services/rooms';
+import { Room } from '@/types/rooms';
+import dayjs from 'dayjs';
 import './booking.css';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-// Mock data for rooms
-interface Room {
-  id: string;
-  name: string;
-  block: string;
-  floor: string;
-  image: string;
-}
-
+// Interface for displaying reservations in UI
 interface Reservation {
   id: string;
+  roomId: string;
   roomName: string;
   block: string;
   floor: string;
@@ -44,61 +45,42 @@ interface Reservation {
   date: string;
   image: string;
   canCheckIn: boolean;
-  countdown?: string;
+  status: string;
 }
 
-const mockRooms: Room[] = [
-  { id: '1', name: 'Room B4.304', block: 'Block B4', floor: '3rd floor', image: '/room-placeholder.png' },
-  { id: '2', name: 'Room B4.304', block: 'Block B4', floor: '3rd floor', image: '/room-placeholder.png' },
-  { id: '3', name: 'Room B4.304', block: 'Block B4', floor: '3rd floor', image: '/room-placeholder.png' },
-  { id: '4', name: 'Room B4.304', block: 'Block B4', floor: '3rd floor', image: '/room-placeholder.png' },
-  { id: '5', name: 'Room B4.304', block: 'Block B4', floor: '3rd floor', image: '/room-placeholder.png' },
-  { id: '6', name: 'Room B4.304', block: 'Block B4', floor: '3rd floor', image: '/room-placeholder.png' },
-];
+// Helper: Check if booking can be checked in (within 15 minutes of start time)
+const canCheckIn = (booking: Booking): boolean => {
+  const now = dayjs();
+  const start = dayjs(booking.startDateTime);
+  const minutesUntilStart = start.diff(now, 'minute');
+  return minutesUntilStart <= 15 && minutesUntilStart >= -15 && booking.status === 'confirmed';
+};
 
-const mockReservations: Reservation[] = [
-  {
-    id: '1',
-    roomName: 'Room B4.304',
-    block: 'Block B4',
-    floor: '3rd floor',
-    time: '14:00 - 16:00',
-    date: '15/12/2025',
+// Helper: Get ordinal suffix for floor number
+const getOrdinalSuffix = (n: number): string => {
+  const s = ['th', 'st', 'nd', 'rd'];
+  const v = n % 100;
+  return s[(v - 20) % 10] || s[v] || s[0];
+};
+
+// Helper: Transform API booking to UI Reservation format
+const transformBookingToReservation = (booking: Booking): Reservation => {
+  const start = dayjs(booking.startDateTime);
+  const end = dayjs(booking.endDateTime);
+
+  return {
+    id: booking.id,
+    roomId: booking.room.id,
+    roomName: booking.room.name,
+    block: booking.room.floor.building.block || booking.room.floor.building.name,
+    floor: `${booking.room.floor.floorNumber}${getOrdinalSuffix(booking.room.floor.floorNumber)} floor`,
+    time: `${start.format('HH:mm')} - ${end.format('HH:mm')}`,
+    date: start.format('DD/MM/YYYY'),
     image: '/room-placeholder.png',
-    canCheckIn: true,
-  },
-  {
-    id: '2',
-    roomName: 'Room B4.304',
-    block: 'Block B4',
-    floor: '3rd floor',
-    time: '14:00 - 16:00',
-    date: '15/12/2025',
-    image: '/room-placeholder.png',
-    canCheckIn: false,
-    countdown: '16:21:05',
-  },
-  {
-    id: '3',
-    roomName: 'Room B4.304',
-    block: 'Block B4',
-    floor: '3rd floor',
-    time: '14:00 - 16:00',
-    date: '15/12/2025',
-    image: '/room-placeholder.png',
-    canCheckIn: false,
-  },
-  {
-    id: '4',
-    roomName: 'Room B4.304',
-    block: 'Block B4',
-    floor: '3rd floor',
-    time: '14:00 - 16:00',
-    date: '15/12/2025',
-    image: '/room-placeholder.png',
-    canCheckIn: false,
-  },
-];
+    canCheckIn: canCheckIn(booking),
+    status: booking.status,
+  };
+};
 
 const BookingPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -106,6 +88,41 @@ const BookingPage: React.FC = () => {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const pageSize = 6;
+
+  const {
+    data: rooms = [],
+    isLoading: isLoadingRooms,
+    error: roomsError,
+  } = useQuery({
+    queryKey: ['rooms'],
+    queryFn: roomsService.getAll,
+  });
+
+  const {
+    data: bookings = [],
+    isLoading: isLoadingBookings,
+    error: bookingsError,
+  } = useQuery({
+    queryKey: ['myBookings'],
+    queryFn: bookingsService.getMyBookings,
+  });
+
+  const upcomingReservations = useMemo(() => {
+    const now = dayjs();
+    return bookings
+      .filter((booking) => {
+        const end = dayjs(booking.endDateTime);
+        return end.isAfter(now) && booking.status !== 'cancelled';
+      })
+      .map(transformBookingToReservation)
+      .slice(0, 4); 
+  }, [bookings]);
+
+  const paginatedRooms = useMemo(() => {
+    const startIndex = (currentPage - 1) * pageSize;
+    return rooms.slice(startIndex, startIndex + pageSize);
+  }, [rooms, currentPage]);
 
   const handleView = (roomId: string) => {
     navigate(`/room/${roomId}/details`);
@@ -205,48 +222,65 @@ const BookingPage: React.FC = () => {
             </div>
 
             {/* Room Grid */}
-            <Row gutter={[16, 16]} className="room-grid">
-              {mockRooms.map((room) => (
-                <Col xs={24} sm={12} key={room.id}>
-                  <Card className="room-card" hoverable>
-                    <div className="room-card-content">
-                      <img
-                        src={room.image}
-                        alt={room.name}
-                        className="room-image"
-                        onError={(e) => {
-                          e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&q=80';
-                        }}
-                      />
-                      <div className="room-info">
-                        <Text strong className="room-name">{room.name}</Text>
-                        <div className="room-location">
-                          <EnvironmentOutlined />
-                          <Text type="secondary">{room.block}, {room.floor}</Text>
+            {isLoadingRooms ? (
+              <div style={{ textAlign: 'center', padding: '40px' }}>
+                <Spin size="large" />
+              </div>
+            ) : roomsError ? (
+              <Alert
+                message="Error loading rooms"
+                description="Failed to fetch rooms. Please try again later."
+                type="error"
+                showIcon
+              />
+            ) : rooms.length === 0 ? (
+              <Empty description="No rooms available" />
+            ) : (
+              <Row gutter={[16, 16]} className="room-grid">
+                {paginatedRooms.map((room) => (
+                  <Col xs={24} sm={12} key={room.id}>
+                    <Card className="room-card" hoverable>
+                      <div className="room-card-content">
+                        <img
+                          src={room.thumbnail || '/room-placeholder.png'}
+                          alt={room.room}
+                          className="room-image"
+                          onError={(e) => {
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&q=80';
+                          }}
+                        />
+                        <div className="room-info">
+                          <Text strong className="room-name">{room.room}</Text>
+                          <div className="room-location">
+                            <EnvironmentOutlined />
+                            <Text type="secondary">{room.block}, {room.floor}</Text>
+                          </div>
+                          <Space className="room-actions">
+                            <Button onClick={() => handleView(room.id)}>View</Button>
+                            <Button type="primary" onClick={() => handleBook(room)}>
+                              Book
+                            </Button>
+                          </Space>
                         </div>
-                        <Space className="room-actions">
-                          <Button onClick={() => handleView(room.id)}>View</Button>
-                          <Button type="primary" onClick={() => handleBook(room)}>
-                            Book
-                          </Button>
-                        </Space>
                       </div>
-                    </div>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            )}
 
             {/* Pagination */}
-            <div className="pagination-container">
-              <Pagination
-                current={currentPage}
-                total={50}
-                pageSize={6}
-                onChange={setCurrentPage}
-                showSizeChanger={false}
-              />
-            </div>
+            {rooms.length > 0 && (
+              <div className="pagination-container">
+                <Pagination
+                  current={currentPage}
+                  total={rooms.length}
+                  pageSize={pageSize}
+                  onChange={setCurrentPage}
+                  showSizeChanger={false}
+                />
+              </div>
+            )}
           </Card>
         </Col>
 
@@ -259,39 +293,56 @@ const BookingPage: React.FC = () => {
             </div>
 
             <div className="reservations-list">
-              {mockReservations.map((reservation) => (
-                <Card key={reservation.id} className="reservation-item" size="small">
-                  <div className="reservation-content">
-                    <img
-                      src={reservation.image}
-                      alt={reservation.roomName}
-                      className="reservation-image"
-                      onError={(e) => {
-                        e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=200&q=80';
-                      }}
-                    />
-                    <div className="reservation-info">
-                      <Text strong>{reservation.roomName}</Text>
-                      <div className="reservation-detail">
-                        <EnvironmentOutlined />
-                        <Text type="secondary">{reservation.block}, {reservation.floor}</Text>
+              {isLoadingBookings ? (
+                <div style={{ textAlign: 'center', padding: '20px' }}>
+                  <Spin />
+                </div>
+              ) : bookingsError ? (
+                <Alert
+                  message="Error loading bookings"
+                  type="error"
+                  showIcon
+                  style={{ marginBottom: 16 }}
+                />
+              ) : upcomingReservations.length === 0 ? (
+                <Empty description="No upcoming reservations" />
+              ) : (
+                upcomingReservations.map((reservation) => (
+                  <Card key={reservation.id} className="reservation-item" size="small">
+                    <div className="reservation-content">
+                      <img
+                        src={reservation.image}
+                        alt={reservation.roomName}
+                        className="reservation-image"
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=200&q=80';
+                        }}
+                      />
+                      <div className="reservation-info">
+                        <Text strong>{reservation.roomName}</Text>
+                        <div className="reservation-detail">
+                          <EnvironmentOutlined />
+                          <Text type="secondary">{reservation.block}, {reservation.floor}</Text>
+                        </div>
+                        <div className="reservation-detail">
+                          <ClockCircleOutlined />
+                          <Text type="secondary">{reservation.time} | {reservation.date}</Text>
+                        </div>
+                        <Space className="reservation-actions">
+                          <Button size="small" onClick={() => handleView(reservation.roomId)}>View</Button>
+                          {reservation.canCheckIn ? (
+                            <Button size="small" type="primary">Check in</Button>
+                          ) : (
+                            <Tag color={reservation.status === 'confirmed' ? 'blue' : 'default'}>
+                              {reservation.status}
+                            </Tag>
+                          )}
+                        </Space>
                       </div>
-                      <div className="reservation-detail">
-                        <ClockCircleOutlined />
-                        <Text type="secondary">{reservation.time} | {reservation.date}</Text>
-                      </div>
-                      <Space className="reservation-actions">
-                        <Button size="small" onClick={() => handleView(reservation.id)}>View</Button>
-                        {reservation.canCheckIn ? (
-                          <Button size="small" type="primary">Check in</Button>
-                        ) : reservation.countdown ? (
-                          <Tag color="default">{reservation.countdown}</Tag>
-                        ) : null}
-                      </Space>
                     </div>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                ))
+              )}
             </div>
           </Card>
         </Col>
@@ -314,7 +365,7 @@ const BookingPage: React.FC = () => {
       >
         {selectedRoom && (
           <div className="booking-modal-content">
-            <Text strong className="modal-room-name">{selectedRoom.name}</Text>
+            <Text strong className="modal-room-name">{selectedRoom.room}</Text>
             <div className="modal-detail">
               <EnvironmentOutlined />
               <Text type="secondary">{selectedRoom.block}, {selectedRoom.floor}</Text>
@@ -329,8 +380,8 @@ const BookingPage: React.FC = () => {
             </div>
 
             <img
-              src={selectedRoom.image}
-              alt={selectedRoom.name}
+              src={selectedRoom.thumbnail || '/room-placeholder.png'}
+              alt={selectedRoom.room}
               className="modal-room-image"
               onError={(e) => {
                 e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&q=80';
