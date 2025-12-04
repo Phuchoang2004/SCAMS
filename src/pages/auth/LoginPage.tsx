@@ -35,7 +35,7 @@ export const LoginPage: React.FC = () => {
       <div className="auth-content">
         <div className="auth-image-section">
           <img
-            src="/hcmut-building.png"
+            src="/hcmut-library.webp"
             alt="HCMUT Building"
             className="auth-image"
             onError={(e) => {
@@ -48,10 +48,10 @@ export const LoginPage: React.FC = () => {
         <div className="auth-form-section">
           <div className="auth-form-container">
             <Title level={2} className="auth-title">
-              Sign in
+              Sign In
             </Title>
             <Text type="secondary" className="auth-subtitle">
-              Smart Campus System - Make the university smart
+              Smart Campus System - Make Our University Smart
             </Text>
 
             <Form
@@ -98,7 +98,7 @@ export const LoginPage: React.FC = () => {
                   loading={isLoginLoading}
                   className="auth-submit-btn"
                 >
-                  Sign in
+                  Sign In
                 </Button>
               </Form.Item>
 

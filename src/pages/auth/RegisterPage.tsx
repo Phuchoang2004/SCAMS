@@ -1,30 +1,50 @@
-import React from 'react';
-import { Form, Input, Button, Typography } from 'antd';
-import { MailOutlined, LockOutlined } from '@ant-design/icons';
-import { Link, Navigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Form, Input, Button, Typography, Select, message } from 'antd';
+import { MailOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { ROUTES } from '@/config/routes';
+import axios from 'axios';
+import { env } from '@/config/env';
 import './auth.css';
 
 const { Title, Text } = Typography;
+const { Option } = Select;
 
 interface RegisterFormValues {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   confirmPassword: string;
+  role: 'Student' | 'Lecturer' | 'Security';
 }
 
 export const RegisterPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
   const [form] = Form.useForm();
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   if (isAuthenticated) {
     return <Navigate to={ROUTES.HOME} replace />;
   }
 
   const onFinish = async (values: RegisterFormValues) => {
-    console.log('Register values:', values);
-    // TODO: Implement registration logic
+    setIsLoading(true);
+    try {
+      const { confirmPassword, ...registerData } = values;
+      await axios.post(`${env.API_BASE_URL}/auth/register`, registerData, {
+        withCredentials: true,
+      });
+      message.success('Registration successful! Please login.');
+      navigate(ROUTES.LOGIN);
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+      message.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -34,7 +54,7 @@ export const RegisterPage: React.FC = () => {
       <div className="auth-content">
         <div className="auth-image-section">
           <img
-            src="/hcmut-building.png"
+            src="/hcmut-library.webp"
             alt="HCMUT Building"
             className="auth-image"
             onError={(e) => {
@@ -47,10 +67,10 @@ export const RegisterPage: React.FC = () => {
         <div className="auth-form-section">
           <div className="auth-form-container">
             <Title level={2} className="auth-title">
-              Sign up
+              Sign Up
             </Title>
             <Text type="secondary" className="auth-subtitle">
-              Smart Campus System - Make the university smart
+              Smart Campus System - Make Our University Smart
             </Text>
 
             <Form
@@ -60,7 +80,35 @@ export const RegisterPage: React.FC = () => {
               layout="vertical"
               requiredMark={false}
               className="auth-form"
-            >
+                          >
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <Form.Item
+                  name="firstName"
+                  style={{ flex: 1 }}
+                  rules={[{ required: true, message: 'Please enter your first name' }]}
+                >
+                  <Input
+                    prefix={<UserOutlined className="input-icon" />}
+                    placeholder="First name..."
+                    size="large"
+                    className="auth-input"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="lastName"
+                  style={{ flex: 1 }}
+                  rules={[{ required: true, message: 'Please enter your last name' }]}
+                >
+                  <Input
+                    prefix={<UserOutlined className="input-icon" />}
+                    placeholder="Last name..."
+                    size="large"
+                    className="auth-input"
+                  />
+                </Form.Item>
+              </div>
+
               <Form.Item
                 name="email"
                 rules={[
@@ -118,15 +166,31 @@ export const RegisterPage: React.FC = () => {
                 />
               </Form.Item>
 
-              <Form.Item>
+              <Form.Item
+                name="role"
+                rules={[{ required: true, message: 'Please select your role' }]}
+              >
+                <Select
+                  size="large"
+                  placeholder="Select your role..."
+                  style={{ width: '50%' }}
+                >
+                  <Option value="Student">Student</Option>
+                  <Option value="Lecturer">Lecturer</Option>
+                  <Option value="Security">Security</Option>
+                </Select>
+              </Form.Item>
+
+              <Form.Item className="submit-btn-item">
                 <Button
                   type="primary"
                   htmlType="submit"
                   size="large"
                   block
+                  loading={isLoading}
                   className="auth-submit-btn"
                 >
-                  Sign up
+                  Sign Up
                 </Button>
               </Form.Item>
             </Form>

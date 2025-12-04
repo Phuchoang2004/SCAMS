@@ -24,8 +24,8 @@
   max-width: 50%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 40px;
+  justify-content: flex-end;
+  padding: 40px 15px 40px 40px;
   background-color: #ffffff;
 }
 
@@ -51,21 +51,25 @@
 
 .auth-form-container {
   width: 100%;
-  max-width: 380px;
+  max-width: 420px;
 }
 
 .auth-title {
   text-align: center;
   margin-bottom: 8px !important;
   color: #1890ff !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
+  font-size: 32px !important;
 }
 
 .auth-subtitle {
   display: block;
   text-align: center;
-  margin-bottom: 32px;
-  font-size: 14px;
+  margin-bottom: 28px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #555 !important;
+  letter-spacing: 0.3px;
 }
 
 .auth-form {
@@ -75,7 +79,7 @@
 .auth-input {
   border-radius: 8px !important;
   padding: 12px 16px !important;
-  border: 1px solid #e0e0e0 !important;
+  border: 1.5px solid #e0e0e0 !important;
   background-color: #fafafa !important;
 }
 
@@ -176,6 +180,10 @@
   margin-bottom: 20px;
 }
 
+.auth-form .ant-form-item.submit-btn-item {
+  margin-top: 32px;
+}
+
 .auth-form .ant-form-item-explain-error {
   font-size: 12px;
   margin-top: 4px;
@@ -185,7 +193,7 @@
 .auth-form .ant-input-affix-wrapper {
   border-radius: 8px !important;
   padding: 12px 16px !important;
-  border: 1px solid #e0e0e0 !important;
+  border: 1.5px solid #e0e0e0 !important;
   background-color: #fafafa !important;
 }
 
@@ -197,4 +205,24 @@
 
 .auth-form .ant-input-affix-wrapper .ant-input {
   background-color: transparent !important;
+}
+
+/* Select dropdown styling */
+.auth-form .ant-select .ant-select-selector {
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  height: 48px !important;
+  border: 1.5px solid #e0e0e0 !important;
+  background-color: #fafafa !important;
+}
+
+.auth-form .ant-select .ant-select-selector:hover,
+.auth-form .ant-select-focused .ant-select-selector {
+  border-color: #1890ff !important;
+  background-color: #ffffff !important;
+}
+
+.auth-form .ant-select .ant-select-selection-item,
+.auth-form .ant-select .ant-select-selection-placeholder {
+  line-height: 32px !important;
 }
