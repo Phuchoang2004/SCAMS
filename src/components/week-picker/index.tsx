@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import { DateRange } from "@/types";
+import { CalendarDays } from "lucide-react";
 
 dayjs.extend(isoWeek);
 dayjs.extend(advancedFormat);
@@ -17,11 +18,9 @@ const WeekPicker = ({ onChange }: WeekPickerProps) => {
   const formatWeek = (value: dayjs.Dayjs) => {
     const diffInDays = value.diff(SEMESTER_START, "day");
     const academicWeek = Math.floor(diffInDays / 7) + 1;
-
-    const start = value.startOf("isoWeek").format("DD/MM/YYYY");
+    const start = value.startOf("isoWeek").format("DD/MM");
     const end = value.endOf("isoWeek").subtract(2, "day").format("DD/MM/YYYY");
-
-    return `Week ${academicWeek}:   ${start} - ${end}`;
+    return `Week ${academicWeek}   |   ${start} - ${end}`;
   };
 
   return (
@@ -29,10 +28,14 @@ const WeekPicker = ({ onChange }: WeekPickerProps) => {
       picker="week"
       format={formatWeek}
       allowClear={false}
+      suffixIcon={<CalendarDays size={18} color="white" />}
+      className="navy-week-picker"
       style={{
-        width: "100%",
-        height: "40px",
-        borderRadius: "6px",
+        height: 44,
+        borderRadius: 8,
+        backgroundColor: "#0077B5",
+        border: "none",
+        color: "white",
       }}
       onChange={(date) => {
         const start = date.startOf("week");
