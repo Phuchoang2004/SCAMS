@@ -47,12 +47,9 @@ const CustomFrequencyFields = ({
               <Text strong style={{ fontSize: 14 }}>Weekday</Text>
             </Flex>
           }
+          initialValue={Weekday.MONDAY}
         >
           <Select
-            onChange={(value) => {
-              form.setFieldValue("weekday", value);
-            }}
-            defaultValue={Weekday.MONDAY}
             options={weekdayOptions}
             size="large"
             style={{ minWidth: 140, borderRadius: 8 }}
