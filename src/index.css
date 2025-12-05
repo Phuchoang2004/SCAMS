@@ -106,7 +106,7 @@ body {
 }
 
 .ant-menu-item-selected {
-  background-color: #0077B5 !important;
+  background-color: #1890ff !important;
   color: white !important;
 }
 
@@ -115,27 +115,27 @@ body {
 }
 
 .ant-menu-item:hover:not(.ant-menu-item-selected) {
-  background-color: rgba(0, 119, 181, 0.1) !important;
-  color: #0077B5 !important;
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  color: #1890ff !important;
 }
 
 .ant-select-item-option-selected {
-  background-color: rgba(0, 119, 181, 0.1) !important;
-  color: #0077B5 !important;
+  background-color: rgba(24, 144, 255, 0.1) !important;
+  color: #1890ff !important;
   font-weight: 600 !important;
 }
 
 .ant-select-item-option-active:not(.ant-select-item-option-selected) {
-  background-color: rgba(0, 119, 181, 0.05) !important;
+  background-color: rgba(24, 144, 255, 0.05) !important;
 }
 
 .ant-select:hover .ant-select-selector {
-  border-color: #0077B5 !important;
+  border-color: #1890ff !important;
 }
 
 .ant-select-focused .ant-select-selector {
-  border-color: #0077B5 !important;
-  box-shadow: 0 0 0 2px rgba(0, 119, 181, 0.1) !important;
+  border-color: #1890ff !important;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1) !important;
 }
 
 .ant-tabs-tab {

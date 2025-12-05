@@ -17,7 +17,7 @@ export interface Booking {
   id: string;
   startDateTime: string;
   endDateTime: string;
-  status: 'Confirmed' | 'In_progress' | 'Cancelled';
+  status: 'pending' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled';
   room: BookingRoom;
 }
 
@@ -26,6 +26,12 @@ export interface CreateBookingRequest {
   startDateTime: string;
   endDateTime: string;
   purpose: string;
+}
+
+export interface UpdateBookingRequest {
+  startDateTime?: string;
+  endDateTime?: string;
+  purpose?: string;
 }
 
 export const bookingsService = {
@@ -41,6 +47,24 @@ export const bookingsService = {
     const response = await axios.post<Booking>(
       `${env.API_BASE_URL}/bookings`,
       data,
+      { withCredentials: true }
+    );
+    return response.data;
+  },
+
+  async updateBooking(bookingId: string, data: UpdateBookingRequest): Promise<Booking> {
+    const response = await axios.patch<Booking>(
+      `${env.API_BASE_URL}/bookings/${bookingId}`,
+      data,
+      { withCredentials: true }
+    );
+    return response.data;
+  },
+
+  async cancelBooking(bookingId: string): Promise<Booking> {
+    const response = await axios.patch<Booking>(
+      `${env.API_BASE_URL}/bookings/${bookingId}`,
+      { status: 'cancelled' },
       { withCredentials: true }
     );
     return response.data;
