@@ -12,14 +12,17 @@ import {
   Select,
   Button,
   Divider,
+  message,
 } from "antd";
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import CustomFrequencyFields from "./CustomFrequencyFields";
 import Timetable from "@/components/timetable";
 import dayjs from "dayjs";
 import { buildSessions } from "@/utils/buildSessions";
 import { useAuth } from "@/hooks/useAuth";
 import { Clock, Repeat, FileText, ArrowRight } from "lucide-react";
+import { bookingsService, CreateBookingRequest } from "@/services/bookings";
 
 const { Title, Text } = Typography;
 const { RangePicker } = TimePicker;
@@ -29,6 +32,8 @@ const THEME_BLUE = "#0077B5";
 const RoomBooking = () => {
   const [form] = Form.useForm();
   const { user } = useAuth();
+  const { id: roomId } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const frequency = Form.useWatch("frequency", form);
   const [dateRange, setDateRange] = useState<DateRange>({
     start: dayjs().startOf("week"),
@@ -36,12 +41,67 @@ const RoomBooking = () => {
   });
   const [sessions, setSessions] = useState<Array<RoomSession>>([]);
   const [newSessions, setNewSessions] = useState<Array<RoomSession>>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setTimeout(() => {
       setSessions(mockSessions);
     }, 1000);
   }, []);
+
+  const handleSubmit = async (values: BookingFormData) => {
+    if (!roomId) {
+      message.error("Room ID not found");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Build sessions to get all booking dates/times
+      const sessionsToBook = buildSessions(
+        values,
+        dayjs().startOf("year"),
+        dayjs().endOf("year"),
+        user?.name || "User"
+      );
+
+      if (sessionsToBook.length === 0) {
+        message.error("Please select valid date and time");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const bookingPromises = sessionsToBook.map((session) => {
+        const request: CreateBookingRequest = {
+          roomId,
+          startDateTime: session.start.toISOString(),
+          endDateTime: session.end.toISOString(),
+          purpose: values.purpose,
+        };
+        return bookingsService.createBooking(request);
+      });
+
+      await Promise.all(bookingPromises);
+
+      message.success(
+        sessionsToBook.length === 1
+          ? "Booking created successfully!"
+          : `${sessionsToBook.length} bookings created successfully!`
+      );
+
+      form.resetFields();
+      setNewSessions([]);
+      navigate(`/room/${roomId}/details`);
+    } catch (error: any) {
+      console.error("Booking error:", error);
+      const errorMessage =
+        error.response?.data?.message || "Failed to create booking. Please try again.";
+      message.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <RoomDetailsLayout currentTab="booking">
@@ -56,7 +116,7 @@ const RoomBooking = () => {
             form={form}
             style={{ width: "100%" }}
             layout="vertical"
-            onFinish={(values) => console.log(values)}
+            onFinish={handleSubmit}
             onValuesChange={(_, values: BookingFormData) => {
               const sessions = buildSessions(
                 values,
@@ -117,6 +177,7 @@ const RoomBooking = () => {
                 type="primary"
                 htmlType="submit"
                 size="large"
+                loading={isSubmitting}
                 style={{ backgroundColor: THEME_BLUE, fontWeight: 600, height: 42, paddingInline: 24 }}
               >
                 Register
