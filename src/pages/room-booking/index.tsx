@@ -22,7 +22,7 @@ import dayjs from "dayjs";
 import { buildSessions } from "@/utils/buildSessions";
 import { useAuth } from "@/hooks/useAuth";
 import { Clock, Repeat, FileText, ArrowRight } from "lucide-react";
-import { bookingsService, CreateBookingRequest } from "@/services/bookings";
+import { bookingsService, CreateBatchBookingRequest } from "@/services/bookings";
 
 const { Title, Text } = Typography;
 const { RangePicker } = TimePicker;
@@ -72,17 +72,17 @@ const RoomBooking = () => {
         return;
       }
 
-      const bookingPromises = sessionsToBook.map((session) => {
-        const request: CreateBookingRequest = {
-          roomId,
+      // Use batch API for all-or-nothing booking creation
+      const batchRequest: CreateBatchBookingRequest = {
+        roomId,
+        purpose: values.purpose,
+        bookings: sessionsToBook.map((session) => ({
           startDateTime: session.start.toISOString(),
           endDateTime: session.end.toISOString(),
-          purpose: values.purpose,
-        };
-        return bookingsService.createBooking(request);
-      });
+        })),
+      };
 
-      await Promise.all(bookingPromises);
+      await bookingsService.createBatchBooking(batchRequest);
 
       message.success(
         sessionsToBook.length === 1

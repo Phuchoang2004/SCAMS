@@ -34,6 +34,17 @@ export interface UpdateBookingRequest {
   purpose?: string;
 }
 
+export interface BatchBookingItem {
+  startDateTime: string;
+  endDateTime: string;
+}
+
+export interface CreateBatchBookingRequest {
+  roomId: string;
+  purpose: string;
+  bookings: BatchBookingItem[];
+}
+
 export const bookingsService = {
   async getMyBookings(): Promise<Booking[]> {
     const response = await axios.get<Booking[]>(
@@ -46,6 +57,15 @@ export const bookingsService = {
   async createBooking(data: CreateBookingRequest): Promise<Booking> {
     const response = await axios.post<Booking>(
       `${env.API_BASE_URL}/bookings`,
+      data,
+      { withCredentials: true }
+    );
+    return response.data;
+  },
+
+  async createBatchBooking(data: CreateBatchBookingRequest): Promise<Booking[]> {
+    const response = await axios.post<Booking[]>(
+      `${env.API_BASE_URL}/bookings/batch`,
       data,
       { withCredentials: true }
     );
