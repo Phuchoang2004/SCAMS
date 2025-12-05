@@ -9,8 +9,6 @@ import {
   Col,
   Typography,
   Pagination,
-  Modal,
-  Form,
   Tag,
   Space,
   Spin,
@@ -21,7 +19,6 @@ import {
   SearchOutlined,
   EnvironmentOutlined,
   ClockCircleOutlined,
-  CalendarOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -48,22 +45,21 @@ interface Reservation {
   status: string;
 }
 
-// Helper: Check if booking can be checked in (within 15 minutes of start time)
+
 const canCheckIn = (booking: Booking): boolean => {
   const now = dayjs();
   const start = dayjs(booking.startDateTime);
   const minutesUntilStart = start.diff(now, 'minute');
-  return minutesUntilStart <= 15 && minutesUntilStart >= -15 && booking.status === 'confirmed';
+  return minutesUntilStart <= 15 && minutesUntilStart >= -15 && booking.status === 'Confirmed';
 };
 
-// Helper: Get ordinal suffix for floor number
+
 const getOrdinalSuffix = (n: number): string => {
   const s = ['th', 'st', 'nd', 'rd'];
   const v = n % 100;
   return s[(v - 20) % 10] || s[v] || s[0];
 };
 
-// Helper: Transform API booking to UI Reservation format
 const transformBookingToReservation = (booking: Booking): Reservation => {
   const start = dayjs(booking.startDateTime);
   const end = dayjs(booking.endDateTime);
@@ -84,9 +80,6 @@ const transformBookingToReservation = (booking: Booking): Reservation => {
 
 const BookingPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
-  const [form] = Form.useForm();
   const navigate = useNavigate();
   const pageSize = 6;
 
@@ -113,7 +106,7 @@ const BookingPage: React.FC = () => {
     return bookings
       .filter((booking) => {
         const end = dayjs(booking.endDateTime);
-        return end.isAfter(now) && booking.status !== 'cancelled';
+        return end.isAfter(now) && booking.status !== 'Cancelled';
       })
       .map(transformBookingToReservation)
       .slice(0, 4); 
@@ -129,24 +122,12 @@ const BookingPage: React.FC = () => {
   };
 
   const handleBook = (room: Room) => {
-    setSelectedRoom(room);
-    setIsModalOpen(true);
+    // Navigate to the detailed booking page (Flow B)
+    navigate(`/room/${room.id}/booking`);
   };
 
-  const handleModalCancel = () => {
-    setIsModalOpen(false);
-    setSelectedRoom(null);
-    form.resetFields();
-  };
-
-  const handleBookRoom = () => {
-    form.validateFields().then((values) => {
-      console.log('Booking values:', values);
-      // TODO: Implement booking API call
-      setIsModalOpen(false);
-      setSelectedRoom(null);
-      form.resetFields();
-    });
+  const handleEdit = (roomId: string) => {
+    navigate(`/room/${roomId}/edit`);
   };
 
   return (
@@ -155,7 +136,7 @@ const BookingPage: React.FC = () => {
         <Col xs={24} lg={16}>
           <Card className="booking-card">
             <div className="booking-header">
-              <Title level={4} style={{ margin: 0 }}>Room booking</Title>
+              <Title level={4} style={{ margin: 0 }}>Room Booking</Title>
               <Text type="secondary">Choose a specific time range and book for available rooms</Text>
             </div>
 
@@ -246,7 +227,7 @@ const BookingPage: React.FC = () => {
                           alt={room.room}
                           className="room-image"
                           onError={(e) => {
-                            e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&q=80';
+                            e.currentTarget.src = 'public/images/classroom.jpg';
                           }}
                         />
                         <div className="room-info">
@@ -257,6 +238,7 @@ const BookingPage: React.FC = () => {
                           </div>
                           <Space className="room-actions">
                             <Button onClick={() => handleView(room.id)}>View</Button>
+                            <Button onClick={() => handleEdit(room.id)}>Edit</Button>
                             <Button type="primary" onClick={() => handleBook(room)}>
                               Book
                             </Button>
@@ -288,7 +270,7 @@ const BookingPage: React.FC = () => {
         <Col xs={24} lg={8}>
           <Card className="reservations-card">
             <div className="reservations-header">
-              <Title level={5} style={{ margin: 0 }}>Upcoming reservations</Title>
+              <Title level={5} style={{ margin: 0 }}>Upcoming Reservations</Title>
               <Button type="link" className="view-more-btn">View more</Button>
             </div>
 
@@ -315,7 +297,7 @@ const BookingPage: React.FC = () => {
                         alt={reservation.roomName}
                         className="reservation-image"
                         onError={(e) => {
-                          e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=200&q=80';
+                          e.currentTarget.src = 'public/images/classroom.jpg';
                         }}
                       />
                       <div className="reservation-info">
@@ -347,62 +329,6 @@ const BookingPage: React.FC = () => {
           </Card>
         </Col>
       </Row>
-
-      {/* Booking Modal */}
-      <Modal
-        title="Booking"
-        open={isModalOpen}
-        onCancel={handleModalCancel}
-        footer={[
-          <Button key="cancel" onClick={handleModalCancel}>
-            Cancel
-          </Button>,
-          <Button key="book" type="primary" onClick={handleBookRoom}>
-            Book room
-          </Button>,
-        ]}
-        width={500}
-      >
-        {selectedRoom && (
-          <div className="booking-modal-content">
-            <Text strong className="modal-room-name">{selectedRoom.room}</Text>
-            <div className="modal-detail">
-              <EnvironmentOutlined />
-              <Text type="secondary">{selectedRoom.block}, {selectedRoom.floor}</Text>
-            </div>
-            <div className="modal-detail">
-              <ClockCircleOutlined />
-              <Text type="secondary">14:00 - 16:00 | 15/12/2025</Text>
-            </div>
-            <div className="modal-detail">
-              <CalendarOutlined />
-              <Text type="secondary">Every week</Text>
-            </div>
-
-            <img
-              src={selectedRoom.thumbnail || '/room-placeholder.png'}
-              alt={selectedRoom.room}
-              className="modal-room-image"
-              onError={(e) => {
-                e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&q=80';
-              }}
-            />
-
-            <Form form={form} layout="vertical" className="booking-form">
-              <Form.Item
-                label="Purpose:"
-                name="purpose"
-                rules={[{ required: true, message: 'Please enter booking purpose' }]}
-              >
-                <Input.TextArea
-                  placeholder="Enter booking purpose..."
-                  rows={3}
-                />
-              </Form.Item>
-            </Form>
-          </div>
-        )}
-      </Modal>
     </div>
   );
 };

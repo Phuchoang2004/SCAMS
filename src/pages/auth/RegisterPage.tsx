@@ -59,7 +59,7 @@ export const RegisterPage: React.FC = () => {
             className="auth-image"
             onError={(e) => {
               // Fallback 
-              e.currentTarget.src = 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=80';
+              e.currentTarget.src = 'public/images/classroom.jpg';
             }}
           />
         </div>

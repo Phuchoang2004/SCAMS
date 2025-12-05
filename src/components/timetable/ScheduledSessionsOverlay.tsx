@@ -54,6 +54,7 @@ type SessionItemProps = {
 const TIME_COL_WIDTH = 70;
 const HEADER_HEIGHT = 45;
 const ROW_HEIGHT = 40;
+const NAVY_BLUE= "#9EDAC6"
 
 const SessionItem = ({
   sessions,
@@ -108,10 +109,10 @@ const SessionItem = ({
         padding: 8,
         backgroundColor: isOverlapped
           ? token.colorErrorBgHover
-          : token.colorPrimaryBgHover,
-        color: isOverlapped ? token.colorErrorBorder : token.colorPrimaryBorder,
+          : "rgba(0, 119, 181, 0.15)",
+        color: isOverlapped ? token.colorErrorBorder : NAVY_BLUE,
         borderRadius: 6,
-        border: `2px dashed ${isOverlapped ? token.colorError : token.colorPrimary}`,
+        border: `2px dashed ${isOverlapped ? token.colorError : NAVY_BLUE}`,
         fontSize: 12,
         overflow: "hidden",
       }}

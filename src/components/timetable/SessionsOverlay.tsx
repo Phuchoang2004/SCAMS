@@ -1,7 +1,6 @@
 import { RoomSession } from "@/types";
 import dayjs from "dayjs";
 import { RefObject, useRef } from "react";
-import { theme } from "antd";
 
 type SessionsOverlayProps = {
   sessions: Array<RoomSession>;
@@ -46,6 +45,7 @@ type SessionItemProps = {
 const TIME_COL_WIDTH = 70;
 const HEADER_HEIGHT = 45;
 const ROW_HEIGHT = 40;
+const SESSION_GREEN = "#F8FAFC";
 
 const SessionItem = ({
   session,
@@ -53,7 +53,6 @@ const SessionItem = ({
   start,
   end,
 }: SessionItemProps) => {
-  const { token } = theme.useToken();
 
   const days = end.diff(start, "day") + 1;
   const containerWidth = containerRef.current?.offsetWidth || 700;
@@ -91,8 +90,8 @@ const SessionItem = ({
         flexDirection: "column",
         gap: 4,
         padding: 8,
-        backgroundColor: token.colorPrimary,
-        color: "white",
+        backgroundColor: SESSION_GREEN,
+        color: "#0077B5",
         borderRadius: 6,
         boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
         fontSize: 12,
