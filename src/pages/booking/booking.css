@@ -22,7 +22,7 @@
 .booking-header h4.ant-typography {
   font-size: 24px;
   font-weight: 700;
-  color: #1890ff;
+  color: #000000;
 }
 
 /* Filters */
@@ -129,7 +129,7 @@
 .reservations-header .ant-typography {
   font-size: 20px !important;
   font-weight: 700 !important;
-  color: #1890ff !important;
+  color: #000000 !important;
   margin: 0;
 }
 
