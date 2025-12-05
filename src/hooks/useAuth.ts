@@ -33,13 +33,16 @@ export const useAuth = () => {
 
   // Logout mutation
   const logoutMutation = useMutation({
-    mutationFn: () => {
-      authService.logout();
-      return Promise.resolve();
+    mutationFn: async () => {
+      await authService.logout();
     },
     onSuccess: () => {
       queryClient.clear();
       showSuccessMessage('Logged out successfully');
+      window.location.href = '/login';
+    },
+    onError: () => {
+      queryClient.clear();
       window.location.href = '/login';
     },
   });
