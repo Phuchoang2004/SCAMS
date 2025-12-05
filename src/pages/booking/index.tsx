@@ -14,15 +14,22 @@ import {
   Spin,
   Empty,
   Alert,
+  Modal,
+  Form,
+  TimePicker,
+  message,
 } from 'antd';
 import {
   SearchOutlined,
   EnvironmentOutlined,
   ClockCircleOutlined,
+  EditOutlined,
+  ClearOutlined,
+  FilterOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { bookingsService, Booking } from '@/services/bookings';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { bookingsService, Booking, UpdateBookingRequest } from '@/services/bookings';
 import { roomsService } from '@/services/rooms';
 import { Room } from '@/types/rooms';
 import dayjs from 'dayjs';
@@ -43,6 +50,8 @@ interface Reservation {
   image: string;
   canCheckIn: boolean;
   status: string;
+  startDateTime: string;
+  endDateTime: string;
 }
 
 
@@ -50,7 +59,7 @@ const canCheckIn = (booking: Booking): boolean => {
   const now = dayjs();
   const start = dayjs(booking.startDateTime);
   const minutesUntilStart = start.diff(now, 'minute');
-  return minutesUntilStart <= 15 && minutesUntilStart >= -15 && booking.status === 'Confirmed';
+  return minutesUntilStart <= 15 && minutesUntilStart >= -15 && booking.status === 'confirmed';
 };
 
 
@@ -75,12 +84,21 @@ const transformBookingToReservation = (booking: Booking): Reservation => {
     image: '/room-placeholder.png',
     canCheckIn: canCheckIn(booking),
     status: booking.status,
+    startDateTime: booking.startDateTime,
+    endDateTime: booking.endDateTime,
   };
 };
 
 const BookingPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [selectedBlock, setSelectedBlock] = useState('all');
+  const [form] = Form.useForm();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const pageSize = 6;
 
   const {
@@ -106,16 +124,55 @@ const BookingPage: React.FC = () => {
     return bookings
       .filter((booking) => {
         const end = dayjs(booking.endDateTime);
-        return end.isAfter(now) && booking.status !== 'Cancelled';
+        return end.isAfter(now) && booking.status !== 'cancelled';
       })
       .map(transformBookingToReservation)
       .slice(0, 4); 
   }, [bookings]);
 
+  // Get unique blocks for the filter dropdown
+  const availableBlocks = useMemo(() => {
+    const blocks = new Set(rooms.map((room) => room.block).filter(Boolean));
+    return Array.from(blocks).sort();
+  }, [rooms]);
+
+  // Filter rooms based on search text and selected block
+  const filteredRooms = useMemo(() => {
+    return rooms.filter((room) => {
+      const searchLower = searchText.toLowerCase().trim();
+      const matchesSearch =
+        !searchLower ||
+        (room.room && room.room.toLowerCase().includes(searchLower)) ||
+        (room.block && room.block.toLowerCase().includes(searchLower)) ||
+        (room.floor && room.floor.toLowerCase().includes(searchLower));
+
+      const matchesBlock = selectedBlock === 'all' || room.block === selectedBlock;
+
+      return matchesSearch && matchesBlock;
+    });
+  }, [rooms, searchText, selectedBlock]);
+
   const paginatedRooms = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
-    return rooms.slice(startIndex, startIndex + pageSize);
-  }, [rooms, currentPage]);
+    return filteredRooms.slice(startIndex, startIndex + pageSize);
+  }, [filteredRooms, currentPage]);
+
+  // Reset to page 1 when filters change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleBlockChange = (value: string) => {
+    setSelectedBlock(value);
+    setCurrentPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setSearchText('');
+    setSelectedBlock('all');
+    setCurrentPage(1);
+  };
 
   const handleView = (roomId: string) => {
     navigate(`/room/${roomId}/details`);
@@ -126,8 +183,97 @@ const BookingPage: React.FC = () => {
     navigate(`/room/${room.id}/booking`);
   };
 
-  const handleEdit = (roomId: string) => {
-    navigate(`/room/${roomId}/edit`);
+  const handleEditReservation = (reservation: Reservation) => {
+    setSelectedReservation(reservation);
+    form.setFieldsValue({
+      date: dayjs(reservation.startDateTime),
+      startTime: dayjs(reservation.startDateTime),
+      endTime: dayjs(reservation.endDateTime),
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditModalCancel = () => {
+    setIsEditModalOpen(false);
+    setSelectedReservation(null);
+    form.resetFields();
+  };
+
+  const handleUpdateReservation = async () => {
+    try {
+      const values = await form.validateFields();
+
+      if (!selectedReservation) {
+        message.error('No reservation selected');
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      const date = values.date as dayjs.Dayjs;
+      const startTime = values.startTime as dayjs.Dayjs;
+      const endTime = values.endTime as dayjs.Dayjs;
+
+      const startDateTime = date
+        .hour(startTime.hour())
+        .minute(startTime.minute())
+        .second(0);
+      const endDateTime = date
+        .hour(endTime.hour())
+        .minute(endTime.minute())
+        .second(0);
+
+      const updateData: UpdateBookingRequest = {
+        startDateTime: startDateTime.toISOString(),
+        endDateTime: endDateTime.toISOString(),
+      };
+
+      await bookingsService.updateBooking(selectedReservation.id, updateData);
+
+      message.success('Reservation updated successfully!');
+      setIsEditModalOpen(false);
+      setSelectedReservation(null);
+      form.resetFields();
+
+      queryClient.invalidateQueries({ queryKey: ['myBookings'] });
+    } catch (error: any) {
+      console.error('Update error:', error);
+      const errorMessage =
+        error.response?.data?.message || 'Failed to update reservation. Please try again.';
+      message.error(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCancelReservation = async () => {
+    if (!selectedReservation) return;
+
+    Modal.confirm({
+      title: 'Cancel Reservation',
+      content: `Are you sure you want to cancel the reservation for ${selectedReservation.roomName}?`,
+      okText: 'Yes, Cancel',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk: async () => {
+        try {
+          setIsSubmitting(true);
+          await bookingsService.cancelBooking(selectedReservation.id);
+          message.success('Reservation cancelled successfully!');
+          setIsEditModalOpen(false);
+          setSelectedReservation(null);
+          form.resetFields();
+          queryClient.invalidateQueries({ queryKey: ['myBookings'] });
+        } catch (error: any) {
+          console.error('Cancel error:', error);
+          const errorMessage =
+            error.response?.data?.message || 'Failed to cancel reservation. Please try again.';
+          message.error(errorMessage);
+        } finally {
+          setIsSubmitting(false);
+        }
+      },
+    });
   };
 
   return (
@@ -142,64 +288,56 @@ const BookingPage: React.FC = () => {
 
             <div className="booking-filters">
               <Row gutter={[16, 16]} align="middle">
-                <Col xs={24} md={12} lg={10}>
+                <Col xs={24} md={14} lg={12}>
                   <Input
-                    placeholder="Enter a building, floor or room name to search..."
-                    prefix={<SearchOutlined />}
+                    placeholder="Search by room name, block or floor..."
+                    prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
                     className="search-input"
+                    value={searchText}
+                    onChange={handleSearchChange}
+                    allowClear
+                    size="large"
                   />
                 </Col>
-                <Col xs={12} md={6} lg={4}>
-                  <Select defaultValue="all" style={{ width: '100%' }}>
-                    <Option value="all">All blocks</Option>
-                    <Option value="b4">Block B4</Option>
-                    <Option value="b6">Block B6</Option>
-                    <Option value="c4">Block C4</Option>
+                <Col xs={16} md={6} lg={6}>
+                  <Select
+                    value={selectedBlock}
+                    onChange={handleBlockChange}
+                    style={{ width: '100%' }}
+                    size="large"
+                    suffixIcon={<FilterOutlined />}
+                  >
+                    <Option value="all">All Blocks</Option>
+                    {availableBlocks.map((block) => (
+                      <Option key={block} value={block}>
+                        {block}
+                      </Option>
+                    ))}
                   </Select>
                 </Col>
-                <Col xs={12} md={6} lg={2}>
-                  <Button type="primary" icon={<SearchOutlined />}>
-                    Search
-                  </Button>
+                <Col xs={8} md={4} lg={4}>
+                  {(searchText || selectedBlock !== 'all') && (
+                    <Button
+                      icon={<ClearOutlined />}
+                      onClick={handleClearFilters}
+                      size="large"
+                    >
+                      Clear
+                    </Button>
+                  )}
                 </Col>
               </Row>
 
-              <Row gutter={[16, 16]} align="middle" style={{ marginTop: 16 }}>
-                <Col>
-                  <Text>From:</Text>
-                </Col>
-                <Col>
-                  <Select defaultValue="07:00" style={{ width: 100 }}>
-                    {Array.from({ length: 15 }, (_, i) => {
-                      const hour = 7 + i;
-                      const time = `${hour.toString().padStart(2, '0')}:00`;
-                      return <Option key={time} value={time}>{time}</Option>;
-                    })}
-                  </Select>
-                </Col>
-                <Col>
-                  <Text>to:</Text>
-                </Col>
-                <Col>
-                  <Select defaultValue="09:00" style={{ width: 100 }}>
-                    {Array.from({ length: 15 }, (_, i) => {
-                      const hour = 7 + i;
-                      const time = `${hour.toString().padStart(2, '0')}:00`;
-                      return <Option key={time} value={time}>{time}</Option>;
-                    })}
-                  </Select>
-                </Col>
-                <Col>
-                  <DatePicker style={{ width: 150 }} />
-                </Col>
-                <Col>
-                  <Select defaultValue="every-week" style={{ width: 130 }}>
-                    <Option value="once">Once</Option>
-                    <Option value="every-week">Every week</Option>
-                    <Option value="every-month">Every month</Option>
-                  </Select>
-                </Col>
-              </Row>
+              {/* Filter summary */}
+              {(searchText || selectedBlock !== 'all') && (
+                <div className="filter-summary">
+                  <Text type="secondary">
+                    Showing {filteredRooms.length} room{filteredRooms.length !== 1 ? 's' : ''}
+                    {searchText && ` matching "${searchText}"`}
+                    {selectedBlock !== 'all' && ` in ${selectedBlock}`}
+                  </Text>
+                </div>
+              )}
             </div>
 
             {/* Room Grid */}
@@ -214,8 +352,20 @@ const BookingPage: React.FC = () => {
                 type="error"
                 showIcon
               />
-            ) : rooms.length === 0 ? (
-              <Empty description="No rooms available" />
+            ) : filteredRooms.length === 0 ? (
+              <Empty
+                description={
+                  rooms.length === 0
+                    ? "No rooms available"
+                    : "No rooms match your search criteria"
+                }
+              >
+                {rooms.length > 0 && (searchText || selectedBlock !== 'all') && (
+                  <Button type="primary" onClick={handleClearFilters}>
+                    Clear Filters
+                  </Button>
+                )}
+              </Empty>
             ) : (
               <Row gutter={[16, 16]} className="room-grid">
                 {paginatedRooms.map((room) => (
@@ -238,7 +388,6 @@ const BookingPage: React.FC = () => {
                           </div>
                           <Space className="room-actions">
                             <Button onClick={() => handleView(room.id)}>View</Button>
-                            <Button onClick={() => handleEdit(room.id)}>Edit</Button>
                             <Button type="primary" onClick={() => handleBook(room)}>
                               Book
                             </Button>
@@ -252,11 +401,11 @@ const BookingPage: React.FC = () => {
             )}
 
             {/* Pagination */}
-            {rooms.length > 0 && (
+            {filteredRooms.length > 0 && (
               <div className="pagination-container">
                 <Pagination
                   current={currentPage}
-                  total={rooms.length}
+                  total={filteredRooms.length}
                   pageSize={pageSize}
                   onChange={setCurrentPage}
                   showSizeChanger={false}
@@ -312,12 +461,15 @@ const BookingPage: React.FC = () => {
                         </div>
                         <Space className="reservation-actions">
                           <Button size="small" onClick={() => handleView(reservation.roomId)}>View</Button>
-                          {reservation.canCheckIn ? (
+                          <Button
+                            size="small"
+                            icon={<EditOutlined />}
+                            onClick={() => handleEditReservation(reservation)}
+                          >
+                            Edit
+                          </Button>
+                          {reservation.canCheckIn && (
                             <Button size="small" type="primary">Check in</Button>
-                          ) : (
-                            <Tag color={reservation.status === 'confirmed' ? 'blue' : 'default'}>
-                              {reservation.status}
-                            </Tag>
                           )}
                         </Space>
                       </div>
@@ -329,6 +481,81 @@ const BookingPage: React.FC = () => {
           </Card>
         </Col>
       </Row>
+
+      {/* Edit Reservation Modal */}
+      <Modal
+        title="Edit Reservation"
+        open={isEditModalOpen}
+        onCancel={handleEditModalCancel}
+        footer={[
+          <Button key="cancel" onClick={handleEditModalCancel}>
+            Close
+          </Button>,
+          <Button key="delete" danger onClick={handleCancelReservation} loading={isSubmitting}>
+            Cancel Reservation
+          </Button>,
+          <Button key="save" type="primary" onClick={handleUpdateReservation} loading={isSubmitting}>
+            Save Changes
+          </Button>,
+        ]}
+        width={500}
+      >
+        {selectedReservation && (
+          <div className="edit-modal-content">
+            <div style={{ marginBottom: 16 }}>
+              <Text strong style={{ fontSize: 16 }}>{selectedReservation.roomName}</Text>
+              <div style={{ marginTop: 4 }}>
+                <EnvironmentOutlined style={{ marginRight: 8 }} />
+                <Text type="secondary">{selectedReservation.block}, {selectedReservation.floor}</Text>
+              </div>
+            </div>
+
+            <Form form={form} layout="vertical">
+              <Form.Item
+                label="Date"
+                name="date"
+                rules={[{ required: true, message: 'Please select a date' }]}
+              >
+                <DatePicker style={{ width: '100%' }} />
+              </Form.Item>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    label="Start Time"
+                    name="startTime"
+                    rules={[{ required: true, message: 'Please select start time' }]}
+                  >
+                    <TimePicker
+                      format="HH:mm"
+                      minuteStep={30}
+                      style={{ width: '100%' }}
+                      disabledTime={() => ({
+                        disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 22, 23],
+                      })}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    label="End Time"
+                    name="endTime"
+                    rules={[{ required: true, message: 'Please select end time' }]}
+                  >
+                    <TimePicker
+                      format="HH:mm"
+                      minuteStep={30}
+                      style={{ width: '100%' }}
+                      disabledTime={() => ({
+                        disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 22, 23],
+                      })}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
