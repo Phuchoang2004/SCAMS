@@ -11,6 +11,7 @@ import {
   Input,
   Select,
   Button,
+  Divider,
 } from "antd";
 import { useEffect, useState } from "react";
 import CustomFrequencyFields from "./CustomFrequencyFields";
@@ -18,9 +19,12 @@ import Timetable from "@/components/timetable";
 import dayjs from "dayjs";
 import { buildSessions } from "@/utils/buildSessions";
 import { useAuth } from "@/hooks/useAuth";
+import { Clock, Repeat, FileText, ArrowRight } from "lucide-react";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { RangePicker } = TimePicker;
+
+const THEME_BLUE = "#0077B5";
 
 const RoomBooking = () => {
   const [form] = Form.useForm();
@@ -43,11 +47,15 @@ const RoomBooking = () => {
     <RoomDetailsLayout currentTab="booking">
       <Card>
         <Flex vertical align="flex-start" gap={24}>
-          <Title level={2}>Room booking</Title>
+          <Title level={2}>Room Booking</Title>
           <WeekPicker onChange={setDateRange} />
+
+          <Divider style={{ margin: "8px 0" }} />
+
           <Form
             form={form}
             style={{ width: "100%" }}
+            layout="vertical"
             onFinish={(values) => console.log(values)}
             onValuesChange={(_, values: BookingFormData) => {
               const sessions = buildSessions(
@@ -60,16 +68,27 @@ const RoomBooking = () => {
               setNewSessions(sessions);
             }}
           >
-            <Flex justify="space-between">
-              <Flex gap={24}>
-                <Form.Item name={"duration"} label="Duration">
+            <Flex justify="space-between" align="flex-end">
+              <Flex gap={32}>
+                <Form.Item
+                  name={"duration"}
+                  label={
+                    <Flex align="center" gap={8}>
+                      <Clock size={16} color={THEME_BLUE} />
+                      <Text strong style={{ fontSize: 14 }}>Duration</Text>
+                    </Flex>
+                  }
+                >
                   <RangePicker
                     required
                     allowClear={false}
                     format="HH:00"
                     minuteStep={30}
                     hourStep={1}
+                    size="large"
+                    style={{ borderRadius: 8 }}
                     placeholder={["Start Time", "End Time"]}
+                    separator={<ArrowRight size={16} color="#999" />}
                     disabledTime={() => ({
                       disabledHours: () => [0, 1, 2, 3, 4, 5, 6, 23, 24],
                     })}
@@ -77,23 +96,49 @@ const RoomBooking = () => {
                 </Form.Item>
                 <Form.Item
                   name={"frequency"}
-                  label="Frequency"
+                  label={
+                    <Flex align="center" gap={8}>
+                      <Repeat size={16} color={THEME_BLUE} />
+                      <Text strong style={{ fontSize: 14 }}>Frequency</Text>
+                    </Flex>
+                  }
                   initialValue={Frequency.ONCE}
                   required
                 >
-                  <Select options={bookingOptions} />
+                  <Select
+                    options={bookingOptions}
+                    size="large"
+                    style={{ minWidth: 150, borderRadius: 8 }}
+                  />
                 </Form.Item>
                 <CustomFrequencyFields form={form} frequency={frequency} />
               </Flex>
-              <Button type="primary" htmlType="submit">
-                Book
+              <Button
+                type="primary"
+                htmlType="submit"
+                size="large"
+                style={{ backgroundColor: THEME_BLUE, fontWeight: 600, height: 42, paddingInline: 24 }}
+              >
+                Register
               </Button>
             </Flex>
-            <Form.Item name="purpose" label="Purpose" required>
+            <Form.Item
+              name="purpose"
+              label={
+                <Flex align="center" gap={8}>
+                  <FileText size={16} color={THEME_BLUE} />
+                  <Text strong style={{ fontSize: 14 }}>Purpose</Text>
+                </Flex>
+              }
+              required
+              style={{ marginTop: 16 }}
+            >
               <Input.TextArea
                 required
                 rows={4}
-                placeholder="Enter the purpose..."
+                size="large"
+                style={{ borderRadius: 8 }}
+                placeholder="Enter the purpose of your booking..."
               />
             </Form.Item>
           </Form>

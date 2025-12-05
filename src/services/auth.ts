@@ -29,13 +29,15 @@ export const authService = {
       { withCredentials: true }
     );
 
+    console.log('Auth verify response:', response.data);
+
     const { userId, email, role, firstName, lastName } = response.data;
 
     return {
       id: userId,
       email: email,
       name: `${firstName} ${lastName}`,
-      role: role,
+      role: role?.toLowerCase() as User['role'],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

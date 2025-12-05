@@ -51,6 +51,10 @@ type SessionItemProps = {
   end: dayjs.Dayjs;
 };
 
+const TIME_COL_WIDTH = 70;
+const HEADER_HEIGHT = 45;
+const ROW_HEIGHT = 40;
+
 const SessionItem = ({
   sessions,
   session,
@@ -80,10 +84,11 @@ const SessionItem = ({
       dayjs(session.end).isAfter(dayjs(oldSession.start))
   );
 
-  const width = (containerWidth - 64) / days;
-  const height = duration * 40;
-  const left = 64 + width * offsetDaysFromStart;
-  const top = 40 + 40 * offsetHoursFromSeven;
+  const colWidth = (containerWidth - TIME_COL_WIDTH) / days;
+  const width = colWidth - 4;
+  const height = duration * ROW_HEIGHT - 4;
+  const left = TIME_COL_WIDTH + colWidth * offsetDaysFromStart + 2;
+  const top = HEADER_HEIGHT + ROW_HEIGHT * offsetHoursFromSeven + 2;
 
   if (!dayjs(session.start).isBetween(start, end)) return null;
 
@@ -100,17 +105,21 @@ const SessionItem = ({
         justifyContent: "center",
         flexDirection: "column",
         gap: 4,
-        padding: 4,
+        padding: 8,
         backgroundColor: isOverlapped
           ? token.colorErrorBgHover
           : token.colorPrimaryBgHover,
         color: isOverlapped ? token.colorErrorBorder : token.colorPrimaryBorder,
+        borderRadius: 6,
+        border: `2px dashed ${isOverlapped ? token.colorError : token.colorPrimary}`,
+        fontSize: 12,
+        overflow: "hidden",
       }}
     >
-      <div style={{ textAlign: "center", fontWeight: "bold" }}>
+      <div style={{ textAlign: "center", fontWeight: 600 }}>
         {session.name}
       </div>
-      <div color="#FFFFFF">{session.createdBy}</div>
+      <div style={{ fontSize: 11 }}>{session.createdBy}</div>
     </div>
   );
 };
