@@ -2,6 +2,7 @@ export const ROUTES = {
   // Auth routes
   LOGIN: "/login",
   REGISTER: "/register",
+  VERIFY_EMAIL: "/verify-email",
 
   // Protected routes
   HOME: "/",
