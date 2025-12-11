@@ -61,6 +61,26 @@ export const authService = {
     );
   },
 
+  async verifyEmail(token: string): Promise<{ message: string }> {
+    const response = await axios.get(
+      `${env.API_BASE_URL}/auth/verify-email`,
+      {
+        params: { token },
+        withCredentials: true,
+      }
+    );
+    return response.data;
+  },
+
+  async resendVerificationEmail(email: string): Promise<{ message: string }> {
+    const response = await axios.post(
+      `${env.API_BASE_URL}/auth/resend-verification`,
+      { email },
+      { withCredentials: true }
+    );
+    return response.data;
+  },
+
   isAuthenticated(): boolean {
     // Since we use HTTP-only cookies, we can't check directly
     // The getCurrentUser will fail if not authenticated

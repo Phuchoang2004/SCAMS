@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { RegisterPage } from "@/pages/auth/RegisterPage";
+import { VerifyEmailPage } from "@/pages/auth/VerifyEmailPage";
 import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
 import { SettingsPage } from "@/pages/settings/SettingsPage";
@@ -20,6 +21,7 @@ export const AppRouter: React.FC = () => {
         {/* Public routes */}
         <Route path={ROUTES.LOGIN} element={<LoginPage />} />
         <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+        <Route path={ROUTES.VERIFY_EMAIL} element={<VerifyEmailPage />} />
 
         {/* Protected routes with layout */}
         <Route
