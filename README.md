@@ -4,14 +4,12 @@ Frontend for the Smart Campus System built with React, TypeScript, and Ant Desig
 
 ## Team Members
 
-| Name | Student ID |
-|------|------------|
-| Le Thi Phuong Thao | 2252757 |
-| Nghiem Pham Vy Nghi | 2252518 |
-| Mai Thien Ngon | 2352819 |
-| Mai Hoang Phuc | 2353059 |
-| Luong Tan Tai | 2252635 |
-
+- Lê Thị Phương Thảo - 2252757
+- Nghiêm Phạm Vỹ Nghi - 2252518
+- Mai Hoàng Phúc - 2252635
+- Lương Tấn Tài - 2353059
+- Mai Thiện Ngôn - 2352819
+  
 ## Getting Started
 
 A modern, production-ready React TypeScript application with multi-layer architecture, featuring authentication, routing, state management, and a beautiful UI built with Ant Design.
