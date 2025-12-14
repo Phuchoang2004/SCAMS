@@ -1,68 +1,65 @@
-# TypeScript Frontend Template
+# ASE05 - SCAMS - Smart Campus System
 
-A modern, production-ready React TypeScript template with multi-layer architecture, featuring authentication, routing, state management, and a beautiful UI built with Ant Design.
+Frontend for the Smart Campus System built with React, TypeScript, and Ant Design.
 
-## 🚀 Features
+## Team Members
 
-### ✨ Core Features
-- **🔐 Authentication System** - Complete login/logout with protected routes
-- **🎨 Beautiful UI** - Ant Design components with custom theme tokens
-- **🌙 Dark/Light Theme** - Toggle between themes with persistent storage
-- **📱 Responsive Layout** - Mobile-friendly design with collapsible sidebar
-- **🔄 State Management** - React Query for server state + Context API for client state
-- **🛣️ Routing** - React Router with protected routes and navigation
-- **🎯 TypeScript** - Full type safety throughout the application
-- **⚡ Fast Development** - Vite for lightning-fast builds and HMR
+| Name | Student ID |
+|------|------------|
+| Le Thi Phuong Thao | 2252757 |
+| Nghiem Pham Vy Nghi | 2252518 |
+| Mai Thien Ngon | 2352819 |
+| Mai Hoang Phuc | 2353059 |
+| Luong Tan Tai | 2252635 |
 
-### 🏗️ Architecture Layers
-- **📁 Config Layer** - Environment variables, theme tokens, and app configuration
-- **🔌 Service Layer** - API client with interceptors and error handling  
-- **🎣 Hooks Layer** - Custom React hooks for data fetching and state management
-- **🧱 Component Layer** - Reusable UI components organized by feature
-- **📄 Page Layer** - Route-specific page components
-- **🌐 Context Layer** - Global state management with React Context
-- **⚠️ Error Handling** - Error boundaries and centralized error management
+## Getting Started
 
-## 📸 Screenshots
+A modern, production-ready React TypeScript application with multi-layer architecture, featuring authentication, routing, state management, and a beautiful UI built with Ant Design.
 
-### Login Page
-![Login Page](https://github.com/user-attachments/assets/6757c768-a779-4270-b95a-28e6d3414762)
+## Features
 
-### Dashboard (Light Theme)
-![Dashboard Light](https://github.com/user-attachments/assets/6df0baa6-9c91-47bd-a80c-1e72c5596b03)
+### Core Features
+- **Authentication System** - Complete login/logout with protected routes and email verification
+- **Beautiful UI** - Ant Design components with custom theme tokens
+- **Dark/Light Theme** - Toggle between themes with persistent storage
+- **Responsive Layout** - Mobile-friendly design with collapsible sidebar
+- **State Management** - React Query for server state + Context API for client state
+- **Routing** - React Router with protected routes and navigation
+- **TypeScript** - Full type safety throughout the application
+- **Fast Development** - Vite for lightning-fast builds and HMR
 
-### Dashboard (Collapsed Sidebar)
-![Dashboard Collapsed](https://github.com/user-attachments/assets/fdc7f907-e55b-4234-9026-356618243dc9)
+### Architecture Layers
+- **Config Layer** - Environment variables, theme tokens, and app configuration
+- **Service Layer** - API client with interceptors and error handling
+- **Hooks Layer** - Custom React hooks for data fetching and state management
+- **Component Layer** - Reusable UI components organized by feature
+- **Page Layer** - Route-specific page components
+- **Context Layer** - Global state management with React Context
+- **Error Handling** - Error boundaries and centralized error management
 
-### Profile Page
-![Profile Page](https://github.com/user-attachments/assets/79903eb8-82fc-4eea-9e7e-5bf0efee4732)
+## Technology Stack
 
-### Settings (Dark Theme)
-![Settings Dark](https://github.com/user-attachments/assets/5316fa39-bf37-4580-b518-a6e2c93943de)
+- **React 18** - Latest React with hooks and concurrent features
+- **TypeScript** - Type-safe JavaScript development
+- **Vite** - Next generation frontend tooling
+- **Ant Design 5** - Enterprise-class UI design language
+- **TanStack Query** - Powerful data synchronization for React
+- **React Router 6** - Declarative routing for React
+- **js-cookie** - Simple cookie handling
+- **Axios** - Promise-based HTTP client
 
-## 🛠️ Technology Stack
-
-- **⚛️ React 18** - Latest React with hooks and concurrent features
-- **🔷 TypeScript** - Type-safe JavaScript development
-- **⚡ Vite** - Next generation frontend tooling
-- **🎨 Ant Design 5** - Enterprise-class UI design language
-- **🔄 TanStack Query** - Powerful data synchronization for React
-- **🛣️ React Router 6** - Declarative routing for React
-- **🍪 js-cookie** - Simple cookie handling
-- **📡 Axios** - Promise-based HTTP client
-
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- Node.js 16+ 
+- Node.js 16+
 - npm or yarn
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Phuchoang2004/Template.git
-   cd Template
+   git clone https://github.com/Phuchoang2004/SCAMS-Frontend.git
+   cd SCAMS-Frontend
    ```
 
 2. **Install dependencies**
@@ -84,13 +81,7 @@ A modern, production-ready React TypeScript template with multi-layer architectu
 5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
-### Demo Credentials
-```
-Email: admin@example.com
-Password: admin123
-```
-
-## 📂 Project Structure
+## Project Structure
 
 ```
 src/
@@ -126,119 +117,56 @@ src/
 └── index.css           # Global styles
 ```
 
-## 🔧 Available Scripts
+## Available Scripts
 
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 - `npm run lint` - Run ESLint
 
-## ⚙️ Configuration
+## Configuration
 
 ### Environment Variables
-Create a `.env` file in the root directory:
+
+Copy the example environment file and configure it:
+
+```bash
+cp .env.example .env
+```
+
+Edit the `.env` file with your settings:
 
 ```env
+# API Configuration
 VITE_API_BASE_URL=http://localhost:8000/api
-VITE_APP_NAME=Your App Name
+
+# Application Configuration
+VITE_APP_NAME=Smart Campus System
+
+# Environment
 NODE_ENV=development
 ```
 
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_API_BASE_URL` | Backend API base URL | `http://localhost:8000/api` |
+| `VITE_APP_NAME` | Application display name | `Smart Campus System` |
+| `NODE_ENV` | Environment mode | `development` |
+
 ### Theme Customization
-Edit `src/config/theme.ts` to customize colors, fonts, and other design tokens:
+Edit `src/config/theme.ts` to customize colors, fonts, and other design tokens.
 
-```typescript
-export const customTheme = {
-  token: {
-    colorPrimary: '#1890ff',
-    colorSuccess: '#52c41a',
-    // ... other tokens
-  },
-};
-```
+## Authentication
 
-## 🔐 Authentication
-
-The template includes a complete authentication system:
+The application includes a complete authentication system:
 
 - **Login/Logout** - Form-based authentication with validation
+- **Email Verification** - Verify email before accessing the system
 - **Protected Routes** - Automatic redirection for unauthorized users
 - **Token Management** - Secure token storage and refresh
 - **User Context** - Global user state management
 
-### Implementing Real Authentication
-
-Replace the mock authentication in `src/services/auth.ts` with your actual API calls:
-
-```typescript
-async login(credentials: LoginCredentials): Promise<AuthResponse> {
-  return apiClient.post<AuthResponse>('/auth/login', credentials);
-}
-```
-
-## 🎨 UI Components
-
-### Layout Components
-- **Header** - Navigation bar with user menu and theme toggle
-- **Sidebar** - Collapsible navigation menu
-- **Footer** - Application footer
-- **MainLayout** - Main layout wrapper
-
-### Page Components
-- **LoginPage** - Authentication form
-- **DashboardPage** - Main dashboard with statistics
-- **ProfilePage** - User profile management
-- **SettingsPage** - Application settings
-
-## 📡 API Integration
-
-The template includes a configured HTTP client with:
-
-- **Request/Response Interceptors** - Automatic token attachment and error handling
-- **Error Handling** - Centralized error processing
-- **TypeScript Support** - Fully typed API responses
-
-### Making API Calls
-
-```typescript
-// Using the service layer
-const user = await authService.getCurrentUser();
-
-// Using React Query
-const { data, isLoading, error } = useQuery({
-  queryKey: ['user'],
-  queryFn: () => authService.getCurrentUser(),
-});
-```
-
-## 🌙 Theme System
-
-### Features
-- **Light/Dark Mode** - Toggle between themes
-- **Persistent Storage** - Theme preference saved to localStorage
-- **Custom Tokens** - Easy customization of colors and design
-- **Ant Design Integration** - Seamless theme switching
-
-### Usage
-```typescript
-const { theme, toggleTheme } = useApp();
-
-// Toggle theme
-<Switch checked={theme === 'dark'} onChange={toggleTheme} />
-```
-
-## 🔄 State Management
-
-### Server State (React Query)
-- **Data Fetching** - Automatic caching and synchronization
-- **Mutations** - Optimistic updates and error handling
-- **Background Refetching** - Keep data fresh
-
-### Client State (Context API)
-- **App Settings** - Theme, sidebar state, user preferences
-- **Global State** - Cross-component state sharing
-
-## 🚢 Deployment
+## Deployment
 
 ### Build for Production
 ```bash
@@ -247,44 +175,6 @@ npm run build
 
 The build files will be generated in the `dist/` directory.
 
-### Deploy to Vercel
-```bash
-npx vercel --prod
-```
-
-### Deploy to Netlify
-```bash
-npm run build
-npx netlify deploy --prod --dir=dist
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [React](https://reactjs.org/) - The library for web and native user interfaces
-- [Ant Design](https://ant.design/) - The world's second most popular React UI framework
-- [Vite](https://vitejs.dev/) - Next generation frontend tooling
-- [TanStack Query](https://tanstack.com/query) - Powerful data synchronization for React
-
-## 📞 Support
-
-If you have any questions or need help, please:
-
-1. Check the [documentation](README.md)
-2. Search existing [issues](https://github.com/Phuchoang2004/Template/issues)
-3. Create a new [issue](https://github.com/Phuchoang2004/Template/issues/new)
-
----
-
-Made with ❤️ using React, TypeScript & Ant Design
