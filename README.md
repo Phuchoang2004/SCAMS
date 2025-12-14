@@ -70,7 +70,16 @@ A modern, production-ready React TypeScript application with multi-layer archite
    cp .env.example .env
    ```
    Edit `.env` to configure your API endpoints and other settings.
-
+   ``` bash
+    # API Configuration
+    VITE_API_BASE_URL=http://localhost:8000/api
+    
+    # Application Configuration
+    VITE_APP_NAME=TypeScript Frontend Template
+    
+    # Environment
+    NODE_ENV=development
+   ```
 4. **Start development server**
    ```bash
    npm run dev
